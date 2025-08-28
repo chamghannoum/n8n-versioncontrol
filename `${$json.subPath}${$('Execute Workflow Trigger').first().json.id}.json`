@@ -1,0 +1,102 @@
+{
+  "active": false,
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-25T12:13:43.293Z",
+  "id": "xLTjAb04FLe54fZ1",
+  "isArchived": false,
+  "meta": null,
+  "name": "Diagnosis Validation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -304,
+        -32
+      ],
+      "id": "64ef4066-9f02-4962-bd9b-bb2e40ead70a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "92ec6933-6abc-423f-8963-8745331884ad",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -16
+      ],
+      "id": "0285dc8a-c5b4-45df-bf06-30af3e7dd96b"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-versioncontrol",
+  "repo_owner": "chamghannoum",
+  "repo_path": "\"\"",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-25T12:13:43.304Z",
+      "updatedAt": "2025-08-25T12:13:43.304Z",
+      "role": "workflow:owner",
+      "workflowId": "xLTjAb04FLe54fZ1",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-25T12:17:54.000Z",
+  "versionId": "99e3805b-ab6f-485f-a623-8e50794e633c"
+}
