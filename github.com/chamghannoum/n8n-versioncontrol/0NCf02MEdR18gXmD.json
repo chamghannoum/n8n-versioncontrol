@@ -1,0 +1,708 @@
+{
+  "active": false,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "GitHub",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "checkExclusionCodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "GitHub": {
+      "main": [
+        [
+          {
+            "node": "extractMedicalCodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extractMedicalCodes": {
+      "main": [
+        [
+          {
+            "node": "getRuleKeys",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preprocessing": {
+      "main": [
+        []
+      ]
+    },
+    "getRuleKeys": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkExclusionCodes": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "main": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "applyDateGapRule",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "applyPairedDatesRule",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "applyEventCountRule",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "applyValueThresholdRule",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "applyRatioCheckRule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "applyRatioCheckRule": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "applyDateGapRule": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "applyPairedDatesRule": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "applyEventCountRule": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "applyValueThresholdRule": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "formatFinalOutput",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "formatFinalOutput": {
+      "main": [
+        [
+          {
+            "node": "formatEmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "formatEmail": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-17T06:21:18.594Z",
+  "id": "0NCf02MEdR18gXmD",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "CareGap2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/patient-intake",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        140
+      ],
+      "id": "c13b7e31-facc-4d12-b338-5e55da1ea6cc",
+      "name": "Webhook",
+      "webhookId": "02160f90-fa14-4cd4-836d-3c8ea930407d"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1m9dRVMbLj4MxH1cK_xU-WmqyF2XWIH0gD7-bScIlpgw",
+          "mode": "list",
+          "cachedResultName": "RuleBookGuidelines",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1m9dRVMbLj4MxH1cK_xU-WmqyF2XWIH0gD7-bScIlpgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 298212859,
+          "mode": "list",
+          "cachedResultName": "Optimal",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1m9dRVMbLj4MxH1cK_xU-WmqyF2XWIH0gD7-bScIlpgw/edit#gid=298212859"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        620,
+        140
+      ],
+      "id": "f53b1e94-9ec8-40e5-8e76-5bb9d9db4468",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zikqy2OQmH7886X6",
+          "name": "Cham's Google Sheets Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "chamghannoum",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "CareGap",
+          "mode": "list",
+          "cachedResultName": "CareGap",
+          "cachedResultUrl": "https://github.com/chamghannoum/CareGap"
+        },
+        "filePath": "medicalcodes.json",
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        -80
+      ],
+      "id": "f4d5e63d-d572-4a9d-aaf6-923c40dfcf9a",
+      "name": "GitHub",
+      "webhookId": "074067c8-18ef-4229-890c-e154bf388c49",
+      "credentials": {
+        "githubApi": {
+          "id": "3OZmxBskveXHqOKg",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -80
+      ],
+      "id": "967b4390-90f4-4b06-9927-7268b7b46e34",
+      "name": "extractMedicalCodes"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputs = $input.all();\n\nconst patientInput = inputs.find(i => i.json.patient_id && i.json.name);\nconst patient = patientInput ? patientInput.json : {};\n\nconst medicalCodesInput = inputs.find(i => i.json.R1 || i.json.R15 || i.json.R32);\nconst medicalCodes = medicalCodesInput ? medicalCodesInput.json : {};\n\nconst mappingTable = {\n  \"R1\": [\"last_preventive_visit\"],\n  \"R2\": [\"last_flu_vaccine\"],\n  \"R3\": [\"last_tdap_or_td\"],\n  \"R4\": [\"zoster_dose_1\", \"zoster_dose_2\"],\n  \"R5\": [\"pneumococcal_vaccine_date\"],\n  \"R6a\": [\"hep_b_adult_dose_dates\"],\n  \"R6b\": [\"hep_b_adult_dose_dates\"],\n  \"R7\": [\"acp_codes\", \"acp_notes\"],\n  \"R8\": [\"pharyngitis_diagnosis_date\", \"strep_test_date\", \"antibiotic_dispense_date\"],\n  \"R9\": [\"asthma_diagnosis_data\", \"med_dispense_events\"],\n  \"R10\": [\"last_bp_systolic\", \"last_bp_diastolic\", \"bp_date\"],\n  \"R11\": [\"last_mammogram_date\"],\n  \"R12a\": [\"medication_review_date\", \"medication_list_date\"],\n  \"R12b\": [\"adl_or_iadl_assessment_date\"],\n  \"R13a\": [\"last_pap_date\"],\n  \"R13b\": [\"last_hrhpv_date\"],\n  \"R13c\": [\"pap_date\", \"hrhpv_date\"],\n  \"R14\": [\"last_well_care_visit\"],\n  \"R15\": [\"pcv_dose_dates\"],\n  \"R16\": [\"dtap_dose_dates\"],\n  \"R17\": [\"ipv_dose_dates\"],\n  \"R18\": [\"hepb_dose_date\"],\n  \"R19\": [\"hib_dose_dates\"],\n  \"R20\": [\"mmr_dose_date\"],\n  \"R21\": [\"vzv_dose_date\"],\n  \"R22\": [\"hepa_dose_date\"],\n  \"R23\": [\"flu_dose_dates\"],\n  \"R24\": [\"rota_dose_dates\"],\n  \"R25a\": [\"last_colonoscopy_dates\"],\n  \"R25b\": [\"last_sigmoidoscopy_date\"],\n  \"R25c\": [\"last_ct_colonography_date\"],\n  \"R25d\": [\"last_sDNA_fit_date\"],\n  \"R25e\": [\"last_fobt_date\"],\n  \"R26\": [\"last_bp_systolic\", \"last_bp_diastolic\", \"bp_date\"],\n  \"R27\": [\"last_eye_exam_date\"],\n  \"R28\": [\"ed_discharge_date\", \"follow_up_visit_date\"],\n  \"R29\": [\"mental_discharge_date\", \"follow_up_date\"],\n  \"R30\": [\"mental_discharge_date\", \"follow_up_date\"],\n  \"R31a\": [\"adhd_rx_date\", \"first_followup_date\"],\n  \"R31b\": [\"adhd_rx_date\", \"followup_dates\"],\n  \"R32\": [\"last_hba1c_value\"],\n  \"R33a\": [\"tdap_vaccine_date\"],\n  \"R33b\": [\"meningococcal_vaccine_date\"],\n  \"R33c\": [\"hpv_dose_1_date\", \"hpv_dose_2_date\"],\n  \"R33d\": [\"hpv_dose_dates\"],\n  \"R34\": [\"last_egfr_date\", \"last_uacr_date\"],\n  \"R35\": [\"lead_test_date\"],\n  \"R36a\": [\"antipsychotic_dispenses\", \"glucose_test_date\"],\n  \"R36b\": [\"antipsychotic_dispenses\", \"cholesterol_test_date\"],\n  \"R37\": [\"fracture_date\", \"bmd_test_date\", \"osteoporosis_rx_date\"],\n  \"R38\": [\"bmd_test_date\", \"osteoporosis_rx_date\"],\n  \"R39\": [\"discharge_date\", \"beta_blocker_rx_dates\"],\n  \"R40a\": [\"corticosteriod_dispense\", \"episode_date\"],\n  \"R40b\": [\"bronchodilator_dispense\", \"episode_date\"],\n  \"R41a\": [\"pregnancy_status\", \"enrollment_date\", \"prenatal_visit_date\"],\n  \"R42b\": [\"delivery_date\", \"postpartum_visit_date\"],\n  \"R43a\": [\"delivery_date\", \"influenza_vaccine_date\"],\n  \"R43b\": [\"delivery_date\", \"tdao_vaccine_date\"],\n  \"R44a\": [\"statin_dispense\"],\n  \"R44b\": [\"statin_dispense\"],\n  \"R45a\": [\"statin_dispense\"],\n  \"R45b\": [\"statin_dispense\"],\n  \"R46\": [\"medication_dispense\"]\n};\n\nconst safeArray = (val) => (Array.isArray(val) ? val : []);\n\nconst toDate = (str) => {\n  const d = new Date(str);\n  return isNaN(d) ? null : d;\n};\n\nfunction extractDates(records, codeFields, targetCodes) {\n  const dates = [];\n  for (const rec of safeArray(records)) {\n    for (const field of codeFields) {\n      if (!rec[field]) continue;\n      if (Array.isArray(rec[field])) {\n        if (rec[field].some(code => targetCodes.includes(code))) {\n          if (rec.date) dates.push(rec.date);\n        }\n      } else {\n        if (targetCodes.includes(rec[field])) {\n          if (rec.date) dates.push(rec.date);\n        }\n      }\n    }\n  }\n  return dates;\n}\n\nfunction preprocessPatient(patient, medicalCodes, mappingTable) {\n  const flatPatient = {};\n\n  for (const [ruleId, dataFields] of Object.entries(mappingTable)) {\n    const codes = medicalCodes[ruleId];\n    if (!codes) continue; \n\n    dataFields.forEach(field => {\n      let matchedDates = [];\n\n      if (codes.CPT) {\n        matchedDates = matchedDates.concat(extractDates(patient.encounters, ['codes'], codes.CPT));\n      }\n\n      if (codes.CVX) {\n        matchedDates = matchedDates.concat(extractDates(patient.vaccines, ['cvx'], codes.CVX));\n      }\n\n      if (codes.LOINC) {\n        matchedDates = matchedDates.concat(extractDates(patient.labs, ['loinc'], codes.LOINC));\n      }\n\n      if (codes.ICD10 && field.toLowerCase().includes('diagnosis')) {\n        flatPatient[field] = patient.diagnoses.some(d => codes.ICD10.includes(d));\n        return; \n      }\n\n      // TODO: add medication or other data source handling here if needed\n\n      if (matchedDates.length > 0) {\n        const validDates = matchedDates.map(toDate).filter(d => d !== null);\n        if (validDates.length > 0) {\n          validDates.sort((a, b) => b - a);\n          flatPatient[field] = validDates[0].toISOString().split('T')[0];\n        }\n      }\n    });\n  }\n\n  return flatPatient;\n}\n\nconst flatPatient = preprocessPatient(patient, medicalCodes, mappingTable);\n\nreturn [{ json: flatPatient }];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        760
+      ],
+      "id": "4346b1a1-b488-4981-baaf-7a74e4f2cfcf",
+      "name": "Preprocessing"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "ID",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1160,
+        80
+      ],
+      "id": "32fe8ff9-26d2-49f5-ad8b-ce7a0c4167af",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const medicalCodesObject = $input.item.json.data;\n\nconst medicalCodesArray = Object.entries(medicalCodesObject).map(([key, value]) => ({\n  ID: key,\n  codes: value\n}));\n\nreturn medicalCodesArray.map(item => ({ json: item }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -80
+      ],
+      "id": "14789615-ba04-4242-ac16-136dddaba269",
+      "name": "getRuleKeys"
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhookData = $input.item.json;\nconst patient = webhookData.body || {};\n\nconst hospiceCodes = [\n  \"G9054\", \"M1017\", \"Z51.5\", \"99377\", \"99378\", \"G0182\",\n  \"G9473\", \"G9474\", \"G9475\", \"G9476\", \"G9477\", \"G9478\",\n  \"G9479\", \"Q5003\", \"Q5004\", \"Q5005\", \"Q5006\", \"Q5007\",\n  \"Q5008\", \"Q5003\", \"Q5010\", \"S9126\", \"T2042\", \"T2043\",\n  \"T2044\", \"T2045\", \"T2046\"\n];\n\nconst patientCodes = [\n  ...(patient.diagnoses || []),\n  ...(patient.encounters?.flatMap(enc => enc.codes) || [])\n];\n\nconst hospiceFlag = patientCodes.some(code => hospiceCodes.includes(code));\n\nconst deathFlag = false; // Placeholder\n\npatient.exclusions = {\n  ...(patient.exclusions || {}),\n  hospice: hospiceFlag,\n  death: deathFlag\n};\n\nreturn [{ json: patient }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        380
+      ],
+      "id": "83f4affa-e8c7-4e06-90bc-28bf9f109143",
+      "name": "checkExclusionCodes"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1400,
+        180
+      ],
+      "id": "21c74473-fc3b-4603-886b-12034a3b05ec",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all().map(i => i.json);\n\nconst today = new Date();\n\nfunction calculateAge(dob) {\n  const birthDate = new Date(dob);\n  let age = today.getFullYear() - birthDate.getFullYear();\n  const m = today.getMonth() - birthDate.getMonth();\n  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {\n    age--;\n  }\n  return age;\n}\n\nfunction patientMatchesRule(patient, rule) {\n  const age = calculateAge(patient.dob);\n  if (rule.min_age && age < rule.min_age) return false;\n  if (rule.max_age && age > rule.max_age) return false;\n  if (rule.Gender !== \"All\" && rule.Gender !== patient.gender) return false;\n  if (rule.Diagnosis === \"Yes\") {\n    // Requires diagnosis match\n    // Check if patient's diagnoses overlap rule.codes.ICD10 (or similar)\n    // Simplified example:\n    const hasDiagnosis = patient.diagnoses.some(d => rule.codes?.ICD10?.includes(d));\n    if (!hasDiagnosis) return false;\n  }\n  // Check exclusions - e.g. hospice, death\n  if (patient.exclusions?.hospice) return false;\n  if (patient.exclusions?.death) return false;\n  // Add more exclusion checks here if needed\n  return true;\n}\n\nfunction applyDateGapRule(patient, rule) {\n  // e.g. rule.Data might be \"last_preventive_visit\"\n  // So find that date in patient's encounters, labs, vaccines, etc.\n\n  // For demo, assume patient.encounters contains dates for last_preventive_visit codes\n  // Check the most recent date for any of the CPT/HCPCS codes in rule.codes\n\n  const relevantDates = [];\n\n  // Example: Look into encounters\n  if (patient.encounters && rule.codes?.CPT) {\n    for (const encounter of patient.encounters) {\n      for (const code of encounter.codes) {\n        if (rule.codes.CPT.includes(code)) {\n          relevantDates.push(new Date(encounter.date));\n        }\n      }\n    }\n  }\n\n  // For vaccines\n  if (patient.vaccines && rule.codes?.CVX) {\n    for (const vaccine of patient.vaccines) {\n      if (rule.codes.CVX.includes(vaccine.cvx)) {\n        relevantDates.push(new Date(vaccine.date));\n      }\n    }\n  }\n\n  if (relevantDates.length === 0) return true; // No record found, gap exists\n\n  const mostRecentDate = new Date(Math.max(...relevantDates));\n  const daysSince = (today - mostRecentDate) / (1000 * 3600 * 24);\n\n  if (rule.Threshold === \"\" || rule.Threshold === null) {\n    // If no threshold, just check presence of data\n    return false; // no gap\n  }\n\n  return daysSince > Number(rule.Threshold);\n}\n\n// Main processing\nconst matchedGaps = [];\n\nfor (const item of data) {\n  const patient = {\n    patient_id: item.patient_id,\n    dob: item.dob,\n    gender: item.gender,\n    diagnoses: item.diagnoses,\n    encounters: item.encounters,\n    labs: item.labs,\n    medications: item.medications,\n    vaccines: item.vaccines,\n    exclusions: item.exclusions,\n  };\n\n  const rule = item;\n\n  if (!patientMatchesRule(patient, rule)) {\n    continue;\n  }\n\n  if (rule.Logic === \"date_gap\") {\n    const gapExists = applyDateGapRule(patient, rule);\n    if (gapExists) {\n      matchedGaps.push({\n        patient_id: patient.patient_id,\n        rule_id: rule.ID,\n        guideline: rule.Guideline,\n        gap: rule.Gap,\n        recommended_action: rule.Recommended_Action,\n      });\n    }\n  }\n\n  // TODO: add other logic types (paired_dates, event_count, ratio_check, value_threshold)\n}\n\nreturn [\n  {\n    json: {\n      success: true,\n      patientId: data[0]?.patient_id || null,\n      matchedGaps,\n      matchedRuleCount: matchedGaps.length,\n    },\n  },\n];\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        760
+      ],
+      "id": "16fb41e3-ad7e-48b6-a7c4-95156258c273",
+      "name": "main"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Logic }}",
+                    "rightValue": "date_gap",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d952fee3-256c-49b0-beb0-66ef79f4025f"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "49723f0d-53c8-4424-9049-9330bf32005e",
+                    "leftValue": "={{ $json.Logic }}",
+                    "rightValue": "paired_dates",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3b7abe06-98d8-474f-8356-82bbbf31e344",
+                    "leftValue": "={{ $json.Logic }}",
+                    "rightValue": "event_count",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c6b142d8-b97d-4188-8e87-b67cd3778378",
+                    "leftValue": "={{ $json.Logic }}",
+                    "rightValue": "value_threshold",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bd57c339-1d83-4564-8cab-3a54566b558c",
+                    "leftValue": "={{ $json.Logic }}",
+                    "rightValue": "ratio_check",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1660,
+        140
+      ],
+      "id": "be69872a-5792-4a73-92c9-96ce0a929f06",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all().map(i => i.json);\n\nconst today = new Date();\n\nfunction calculateAge(dob) {\n  const birthDate = new Date(dob);\n  let age = today.getFullYear() - birthDate.getFullYear();\n  const m = today.getMonth() - birthDate.getMonth();\n  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {\n    age--;\n  }\n  return age;\n}\n\nfunction patientMatchesRule(patient, rule) {\n  const age = calculateAge(patient.dob);\n  if (rule.min_age && age < rule.min_age) return false;\n  if (rule.max_age && age > rule.max_age) return false;\n  if (rule.Gender !== \"All\" && rule.Gender !== patient.gender) return false;\n  if (rule.Diagnosis === \"Yes\") {\n    const hasDiagnosis = patient.diagnoses?.some(d => rule.codes?.ICD10?.includes(d));\n    if (!hasDiagnosis) return false;\n  }\n  if (patient.exclusions?.hospice) return false;\n  if (patient.exclusions?.death) return false;\n  return true;\n}\n\nfunction applyDateGapRule(patient, rule) {\n  const relevantDates = [];\n\n  if (patient.encounters && rule.codes?.CPT) {\n    for (const encounter of patient.encounters) {\n      for (const code of encounter.codes) {\n        if (rule.codes.CPT.includes(code)) {\n          relevantDates.push(new Date(encounter.date));\n        }\n      }\n    }\n  }\n\n  if (patient.vaccines && rule.codes?.CVX) {\n    for (const vaccine of patient.vaccines) {\n      if (rule.codes.CVX.includes(vaccine.cvx)) {\n        relevantDates.push(new Date(vaccine.date));\n      }\n    }\n  }\n\n  if (relevantDates.length === 0) return true; \n\n  const mostRecentDate = new Date(Math.max(...relevantDates));\n  const daysSince = (today - mostRecentDate) / (1000 * 3600 * 24);\n\n  if (rule.Threshold === \"\" || rule.Threshold === null) {\n    return false; \n  }\n\n  return daysSince > Number(rule.Threshold);\n}\n\nconst matchedGaps = [];\n\nfor (const item of data) {\n  const patient = {\n    patient_id: item.patient_id,\n    dob: item.dob,\n    gender: item.gender,\n    diagnoses: item.diagnoses,\n    encounters: item.encounters,\n    labs: item.labs,\n    medications: item.medications,\n    vaccines: item.vaccines,\n    exclusions: item.exclusions,\n  };\n\n  const rule = item;\n\n  if (!patientMatchesRule(patient, rule)) continue;\n\n  const gapExists = applyDateGapRule(patient, rule);\n  if (gapExists) {\n    matchedGaps.push({\n      patient_id: patient.patient_id,\n      rule_id: rule.ID,\n      guideline: rule.Guideline,\n      gap: rule.Gap,\n      recommended_action: rule.Recommended_Action,\n    });\n  }\n}\n\nreturn [\n  {\n    json: {\n      success: true,\n      patientId: data[0]?.patient_id || null,\n      matchedGaps,\n      matchedRuleCount: matchedGaps.length,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        -200
+      ],
+      "id": "b0ca0ad5-fc3b-4ce4-b8da-ff11699cd721",
+      "name": "applyDateGapRule"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all().map(i => i.json);\n\nconst today = new Date();\n\nfunction calculateAge(dob) {\n  const birthDate = new Date(dob);\n  let age = today.getFullYear() - birthDate.getFullYear();\n  const m = today.getMonth() - birthDate.getMonth();\n  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {\n    age--;\n  }\n  return age;\n}\n\nfunction patientMatchesRule(patient, rule) {\n  const age = calculateAge(patient.dob);\n  if (rule.min_age && age < rule.min_age) return false;\n  if (rule.max_age && age > rule.max_age) return false;\n  if (rule.Gender !== \"All\" && rule.Gender !== patient.gender) return false;\n  if (rule.Diagnosis === \"Yes\") {\n    const hasDiagnosis = patient.diagnoses?.some(d => rule.codes?.ICD10?.includes(d));\n    if (!hasDiagnosis) return false;\n  }\n  if (patient.exclusions?.hospice) return false;\n  if (patient.exclusions?.death) return false;\n  return true;\n}\n\nfunction applyPairedDatesRule(patient, rule) {\n  const dateFields = rule.Data.split(',').map(f => f.trim());\n\n  const dates1 = patient[dateFields[0]];\n  const dates2 = patient[dateFields[1]];\n\n  function toDates(arr) {\n    if (!arr) return [];\n    if (Array.isArray(arr)) return arr.map(d => new Date(d));\n    return [new Date(arr)];\n  }\n\n  const list1 = toDates(dates1);\n  const list2 = toDates(dates2);\n\n  if (list1.length === 0 || list2.length === 0) {\n    return true;\n  }\n\n  const threshold = Number(rule.Threshold);\n  for (const d1 of list1) {\n    for (const d2 of list2) {\n      const diffDays = Math.abs((d2 - d1) / (1000 * 3600 * 24));\n      if (diffDays >= threshold) {\n        return false;\n      }\n    }\n  }\n\n  return true;\n}\n\nconst matchedGaps = [];\n\nfor (const item of data) {\n  const patient = {\n    patient_id: item.patient_id,\n    dob: item.dob,\n    gender: item.gender,\n    diagnoses: item.diagnoses,\n    encounters: item.encounters,\n    labs: item.labs,\n    medications: item.medications,\n    vaccines: item.vaccines,\n    exclusions: item.exclusions,\n  };\n\n  const rule = item;\n\n  if (!patientMatchesRule(patient, rule)) continue;\n\n  if (rule.Logic === \"paired_dates\") {\n    const gapExists = applyPairedDatesRule(patient, rule);\n    if (gapExists) {\n      matchedGaps.push({\n        patient_id: patient.patient_id,\n        rule_id: rule.ID,\n        guideline: rule.Guideline,\n        gap: rule.Gap,\n        recommended_action: rule.Recommended_Action,\n      });\n    }\n  }\n}\n\nreturn [\n  {\n    json: {\n      success: true,\n      patientId: data[0]?.patient_id || null,\n      matchedGaps,\n      matchedRuleCount: matchedGaps.length,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        -20
+      ],
+      "id": "3c9f710e-1e15-4f2f-ae1b-c0d75882ad65",
+      "name": "applyPairedDatesRule"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all().map(i => i.json);\n\nconst today = new Date();\n\nfunction calculateAge(dob) {\n  const birthDate = new Date(dob);\n  let age = today.getFullYear() - birthDate.getFullYear();\n  const m = today.getMonth() - birthDate.getMonth();\n  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {\n    age--;\n  }\n  return age;\n}\n\nfunction patientMatchesRule(patient, rule) {\n  const age = calculateAge(patient.dob);\n  if (rule.min_age && age < rule.min_age) return false;\n  if (rule.max_age && age > rule.max_age) return false;\n  if (rule.Gender !== \"All\" && rule.Gender !== patient.gender) return false;\n  if (rule.Diagnosis === \"Yes\") {\n    const hasDiagnosis = patient.diagnoses?.some(d => rule.codes?.ICD10?.includes(d));\n    if (!hasDiagnosis) return false;\n  }\n  if (patient.exclusions?.hospice) return false;\n  if (patient.exclusions?.death) return false;\n  return true;\n}\n\nfunction applyEventCountRule(patient, rule) {\n  // rule.Data is a single or comma-separated field(s) representing event dates\n  // It can be an array of dates or a single date for each event type\n  \n  // For simplicity, assume rule.Data is a single field name for an array of dates (e.g. 'pcv_dose_dates')\n  // If multiple fields, you can extend this logic similarly\n\n  const eventDatesRaw = patient[rule.Data];\n\n  if (!eventDatesRaw) {\n    // No events found => gap exists\n    return true;\n  }\n\n  // Convert to array of Date objects\n  const eventDates = Array.isArray(eventDatesRaw)\n    ? eventDatesRaw.map(d => new Date(d))\n    : [new Date(eventDatesRaw)];\n\n  // Count the events and compare with threshold\n  const threshold = Number(rule.Threshold);\n  return eventDates.length < threshold;\n}\n\nconst matchedGaps = [];\n\nfor (const item of data) {\n  const patient = {\n    patient_id: item.patient_id,\n    dob: item.dob,\n    gender: item.gender,\n    diagnoses: item.diagnoses,\n    encounters: item.encounters,\n    labs: item.labs,\n    medications: item.medications,\n    vaccines: item.vaccines,\n    exclusions: item.exclusions,\n  };\n\n  const rule = item;\n\n  if (!patientMatchesRule(patient, rule)) continue;\n\n  if (rule.Logic === \"event_count\") {\n    const gapExists = applyEventCountRule(patient, rule);\n    if (gapExists) {\n      matchedGaps.push({\n        patient_id: patient.patient_id,\n        rule_id: rule.ID,\n        guideline: rule.Guideline,\n        gap: rule.Gap,\n        recommended_action: rule.Recommended_Action,\n      });\n    }\n  }\n}\n\nreturn [\n  {\n    json: {\n      success: true,\n      patientId: data[0]?.patient_id || null,\n      matchedGaps,\n      matchedRuleCount: matchedGaps.length,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        140
+      ],
+      "id": "df1c5dec-fea9-464c-a366-c0328b6e3286",
+      "name": "applyEventCountRule"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all().map(i => i.json);\n\nconst today = new Date();\n\nfunction calculateAge(dob) {\n  const birthDate = new Date(dob);\n  let age = today.getFullYear() - birthDate.getFullYear();\n  const m = today.getMonth() - birthDate.getMonth();\n  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {\n    age--;\n  }\n  return age;\n}\n\nfunction patientMatchesRule(patient, rule) {\n  const age = calculateAge(patient.dob);\n  if (rule.min_age && age < rule.min_age) return false;\n  if (rule.max_age && age > rule.max_age) return false;\n  if (rule.Gender !== \"All\" && rule.Gender !== patient.gender) return false;\n  if (rule.Diagnosis === \"Yes\") {\n    const hasDiagnosis = patient.diagnoses?.some(d => rule.codes?.ICD10?.includes(d));\n    if (!hasDiagnosis) return false;\n  }\n  if (patient.exclusions?.hospice) return false;\n  if (patient.exclusions?.death) return false;\n  return true;\n}\n\nfunction applyValueThresholdRule(patient, rule) {\n  let value = patient[rule.Data];\n\n  if (value === undefined && patient.labs) {\n    const lab = patient.labs.find(l => l.type.toLowerCase() === rule.Data.toLowerCase());\n    value = lab ? lab.value : undefined;\n  }\n\n  if (value === undefined) {\n    return true;\n  }\n\n  const threshold = Number(rule.Threshold);\n  return value > threshold;\n}\n\nconst matchedGaps = [];\n\nfor (const item of data) {\n  const patient = {\n    patient_id: item.patient_id,\n    dob: item.dob,\n    gender: item.gender,\n    diagnoses: item.diagnoses,\n    encounters: item.encounters,\n    labs: item.labs,\n    medications: item.medications,\n    vaccines: item.vaccines,\n    exclusions: item.exclusions,\n  };\n\n  const rule = item;\n\n  if (!patientMatchesRule(patient, rule)) continue;\n\n  if (rule.Logic === \"value_threshold\") {\n    const gapExists = applyValueThresholdRule(patient, rule);\n    if (gapExists) {\n      matchedGaps.push({\n        patient_id: patient.patient_id,\n        rule_id: rule.ID,\n        guideline: rule.Guideline,\n        gap: rule.Gap,\n        recommended_action: rule.Recommended_Action,\n      });\n    }\n  }\n}\n\nreturn [\n  {\n    json: {\n      success: true,\n      patientId: data[0]?.patient_id || null,\n      matchedGaps,\n      matchedRuleCount: matchedGaps.length,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        300
+      ],
+      "id": "4ed951c1-8d88-400a-8252-1da7643aa826",
+      "name": "applyValueThresholdRule"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.all().map(i => i.json);\n\nconst today = new Date();\n\nfunction calculateAge(dob) {\n  const birthDate = new Date(dob);\n  let age = today.getFullYear() - birthDate.getFullYear();\n  const m = today.getMonth() - birthDate.getMonth();\n  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {\n    age--;\n  }\n  return age;\n}\n\nfunction patientMatchesRule(patient, rule) {\n  const age = calculateAge(patient.dob);\n  if (rule.min_age && age < rule.min_age) return false;\n  if (rule.max_age && age > rule.max_age) return false;\n  if (rule.Gender !== \"All\" && rule.Gender !== patient.gender) return false;\n  if (rule.Diagnosis === \"Yes\") {\n    const hasDiagnosis = patient.diagnoses?.some(d => rule.codes?.ICD10?.includes(d));\n    if (!hasDiagnosis) return false;\n  }\n  if (patient.exclusions?.hospice) return false;\n  if (patient.exclusions?.death) return false;\n  return true;\n}\n\nfunction applyRatioCheckRule(patient, rule) {\n\n  if (!rule.Data) return false; \n\n  const [numeratorField, denominatorField] = rule.Data.split(\",\").map(f => f.trim());\n\n  const numerator = patient[numeratorField] || 0;\n  const denominator = patient[denominatorField] || 0;\n\n  if (denominator === 0) {\n    return true;\n  }\n\n  const ratio = numerator / denominator;\n  return ratio < Number(rule.Threshold);\n}\n\nconst matchedGaps = [];\n\nfor (const item of data) {\n  const patient = {\n    patient_id: item.patient_id,\n    dob: item.dob,\n    gender: item.gender,\n    diagnoses: item.diagnoses,\n    encounters: item.encounters,\n    labs: item.labs,\n    medications: item.medications,\n    vaccines: item.vaccines,\n    exclusions: item.exclusions,\n    controller_med_count: item.controller_med_count, \n    total_med_count: item.total_med_count,        \n  };\n\n  const rule = item;\n\n  if (!patientMatchesRule(patient, rule)) continue;\n\n  if (rule.Logic === \"ratio_check\") {\n    const gapExists = applyRatioCheckRule(patient, rule);\n    if (gapExists) {\n      matchedGaps.push({\n        patient_id: patient.patient_id,\n        rule_id: rule.ID,\n        guideline: rule.Guideline,\n        gap: rule.Gap,\n        recommended_action: rule.Recommended_Action,\n      });\n    }\n  }\n}\n\nreturn [\n  {\n    json: {\n      success: true,\n      patientId: data[0]?.patient_id || null,\n      matchedGaps,\n      matchedRuleCount: matchedGaps.length,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        460
+      ],
+      "id": "fdc870e5-25e8-46fa-b783-f4196a84a42d",
+      "name": "applyRatioCheckRule"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2380,
+        80
+      ],
+      "id": "80ee518b-adfd-4bdf-9237-b5a66dffdc01",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allGaps = $input.all().flatMap(item => item.json.matchedGaps || []);\n\nconst patientId = $input.all().find(item => item.json.patientId)?.json.patientId || null;\n\nconst cleanedGaps = allGaps.map(gap => ({\n  gap: gap.gap,\n  recommended_action: gap.recommended_action\n}));\n\nreturn [{\n  json: {\n    patientId,\n    matchedGaps: cleanedGaps\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2620,
+        120
+      ],
+      "id": "25a20371-f02f-4789-b934-935469d95b58",
+      "name": "formatFinalOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const patientId = $input.item.json.patientId || \"Unknown Patient\";\nconst gaps = $input.item.json.matchedGaps || [];\n\nif (gaps.length === 0) {\n  return [{\n    json: {\n      emailSubject: `Care Gap Alert for Patient ${patientId}`,\n      emailBody: `No care gaps detected for patient ID: ${patientId}.`\n    }\n  }];\n}\n\nlet emailBody = `Care Gaps found for patient ID: ${patientId}\\n\\n`;\n\ngaps.forEach((gap, index) => {\n  emailBody += `${index + 1}. Gap: ${gap.gap}\\n`;\n  emailBody += `   Recommended Action: ${gap.recommended_action}\\n\\n`;\n});\n\nreturn [{\n  json: {\n    emailSubject: `Care Gap Alert for Patient ${patientId}`,\n    emailBody: emailBody\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2800,
+        -100
+      ],
+      "id": "ed683316-2f40-421c-a11d-db1ffdaf53e1",
+      "name": "formatEmail"
+    },
+    {
+      "parameters": {
+        "fromEmail": "ghanoumsham@gmail.com",
+        "toEmail": "ghanoumsham@gmail.com",
+        "subject": "={{ $json.emailSubject }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        3020,
+        -100
+      ],
+      "id": "55a88fd5-efe7-4f7c-a473-2f671e6a35b6",
+      "name": "Send Email",
+      "webhookId": "60066412-a559-4d18-8641-6ae1c763f5c4",
+      "credentials": {
+        "smtp": {
+          "id": "fHum1t6tHzkEnDjW",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-versioncontrol",
+  "repo_owner": "chamghannoum",
+  "repo_path": "github.com/chamghannoum/n8n-versioncontrol",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-17T06:21:18.602Z",
+      "updatedAt": "2025-06-17T06:21:18.602Z",
+      "role": "workflow:owner",
+      "workflowId": "0NCf02MEdR18gXmD",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-07-02T07:57:31.000Z",
+  "versionId": "50536dd6-0e47-483c-a8dc-fadbaf80f3ef"
+}
