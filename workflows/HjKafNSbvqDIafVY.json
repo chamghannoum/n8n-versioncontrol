@@ -1,0 +1,828 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "PatientInformation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Medical Messages": {
+      "main": [
+        [
+          {
+            "node": "Guidelines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combines Messages and Name": {
+      "main": [
+        [
+          {
+            "node": "Assemble Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group 0": {
+      "main": [
+        [
+          {
+            "node": "Gender check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group 1": {
+      "main": [
+        [
+          {
+            "node": "Gender check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Female Guidelines": {
+      "main": [
+        [
+          {
+            "node": "Pregnancy guidelines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pregnancy guidelines": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assemble Profile": {
+      "main": [
+        [
+          {
+            "node": "Classify Age",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Age": {
+      "main": [
+        [
+          {
+            "node": "Group 0",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Group 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Group 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gender check": {
+      "main": [
+        [
+          {
+            "node": "Female Guidelines",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Male Guidelines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group 2": {
+      "main": [
+        [
+          {
+            "node": "Gender check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Male Guidelines": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        []
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain 3",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain 3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items 3": {
+      "main": [
+        [
+          {
+            "node": "Final message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model 3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain 3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final message3": {
+      "main": [
+        [
+          {
+            "node": "General Motivational Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assemble Profile3": {
+      "main": [
+        []
+      ]
+    },
+    "Guidelines": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PatientInformation": {
+      "main": [
+        [
+          {
+            "node": "Test Medical Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-19T06:30:51.519Z",
+  "id": "HjKafNSbvqDIafVY",
+  "isArchived": false,
+  "meta": null,
+  "name": "MotivationalMessagePersonalization",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        240
+      ],
+      "id": "da45e69c-d16c-49ea-b451-31b968a74191",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Qllyii4Do025LOVAttA_na3XTJC9-PSgZcNP0fYG8FE",
+          "mode": "list",
+          "cachedResultName": "Beginning Test Medical Messages",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qllyii4Do025LOVAttA_na3XTJC9-PSgZcNP0fYG8FE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 770570420,
+          "mode": "list",
+          "cachedResultName": "General Messages - Motivational",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qllyii4Do025LOVAttA_na3XTJC9-PSgZcNP0fYG8FE/edit#gid=770570420"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        640,
+        240
+      ],
+      "id": "cffd97ff-4ce5-4a4c-8303-4c81b23355c6",
+      "name": "Test Medical Messages",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gsiIfMqpSgtD3EPk",
+          "name": "Layla's Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfor (const item of $input.all()) {\n  const name = $('PatientInformation').first().json.name;\n  const age = $('PatientInformation').first().json.age;\n  const gender = $('PatientInformation').first().json.gender;\n  const conditions = $('PatientInformation').first().json.conditions || [];\n\n  const messageTitle = item.json[\"Message Title\"];\n  const messageContent = item.json[\"Message Content\"];\n  const messageTitleArabic = item.json[\"Message Title Arabic\"];\n  const messageContentArabic = item.json[\"Message Content Arabic\"];\n\n  output.push({\n    patient_profile: {\n      name: name,\n      age: age,\n      gender: gender,\n      conditions: conditions\n    },\n    message: {\n      title: messageTitle,\n      content: messageContent,\n      title_ar: messageTitleArabic,\n      content_ar: messageContentArabic\n    }\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        -480
+      ],
+      "id": "5e65ab7e-9b87-49c4-957d-18d95db1174f",
+      "name": "Combines Messages and Name"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "=19Olxiem7qxqH3b7V3GrI8XgN8z7kh3soAyjnQXS8Y2s"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -700
+      ],
+      "id": "95622eb5-5fd0-4d7a-afa2-8b43b4b533ee",
+      "name": "Group 0",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "SzRZ0XcBxQ93DmM4",
+          "name": "Layla's Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "=1KuN1ph6ubC6FllKtJcfx6NTcyi2NlOVvA-59MGewEhw"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -480
+      ],
+      "id": "6868e58f-cfa9-4bea-9596-70d65ee32098",
+      "name": "Group 1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "SzRZ0XcBxQ93DmM4",
+          "name": "Layla's Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "=1bbDK8fee17DOW5MbbCdgjoCLxXAx-5YCrqowWXikyzc"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        320,
+        -560
+      ],
+      "id": "7188e216-4c4b-472f-9f5b-efce6ca6e51d",
+      "name": "Female Guidelines",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "SzRZ0XcBxQ93DmM4",
+          "name": "Layla's Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "17F7d8CPOn6XYcc45gvZt-vOmnE700AQGKPkcOW2lvrw"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        540,
+        -560
+      ],
+      "id": "82c15e08-680e-4f82-be07-8f2a1d0ffeaa",
+      "name": "Pregnancy guidelines",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "SzRZ0XcBxQ93DmM4",
+          "name": "Layla's Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfor (const item of $input.all()) {\n  const patient = $('PatientInformation').first().json;\n\n  const name = patient.name;\n  const age = patient.age;\n  const gender = patient.gender;\n  const conditions = patient.conditions || [];\n\n  // Assign age group dynamically\n  let ageGroup = null;\n  if (age >= 18 && age <= 39) {\n    ageGroup = 0;\n  } else if (age >= 40 && age <= 64) {\n    ageGroup = 1;\n  } else if (age >= 65) {\n    ageGroup = 2;\n  }\n\n  const messageTitle = $input.first().json.message.title;\n  const messageContent = $input.first().json.message.content;\n  const messageTitleArabic =$input.first().json.message.title_ar ;\n  const messageContentArabic = $input.first().json.message.content_ar;\n\n  output.push({\n    patient_profile: {\n      name: name,\n      age: age,\n      gender: gender,\n      conditions: conditions,\n      age_group: ageGroup\n    },\n    message: {\n      title: messageTitle,\n      content: messageContent,\n      title_ar: messageTitleArabic,\n      content_ar: messageContentArabic\n    }\n  });\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        -480
+      ],
+      "id": "28bc9b10-247d-4870-adfd-ece381e7fac6",
+      "name": "Assemble Profile"
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 3,
+        "output": "={{ \n  $json.patient_profile.age >= 18 && $json.patient_profile.age <= 39 ? 0 : \n  $json.patient_profile.age >= 40 && $json.patient_profile.age <= 64 ? 1 : \n  $json.patient_profile.age >= 65 ? 2 : null \n}}\n\n\n"
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -280,
+        -480
+      ],
+      "id": "bf29c6d2-8c74-4289-80f4-668ae2f1de78",
+      "name": "Classify Age"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "72369d02-4768-4f14-bb09-4ab524b8a959",
+              "leftValue": "={{ $('Assemble Profile').item.json.patient_profile.gender }}",
+              "rightValue": "female",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "10b143fb-1722-4e40-acba-6fb2a0e98b35",
+              "leftValue": "={{ $('Assemble Profile').item.json.patient_profile.gender }}",
+              "rightValue": "male",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        100,
+        -480
+      ],
+      "id": "44a9d1e8-e2be-408c-807a-4de60ee71994",
+      "name": "Gender check"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "=1oVTXUBMNNrRSXr9iClfnz8gQcRFICyuuOoDTP98pWG0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -300
+      ],
+      "id": "8148ee94-057b-45d9-a4d8-e07ff8454bfb",
+      "name": "Group 2",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "SzRZ0XcBxQ93DmM4",
+          "name": "Layla's Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "1v0-ddf7WpheiajAw9oEizdcxxQFHGa-OCFY2w8q7h1Q"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        540,
+        -360
+      ],
+      "id": "45ea078a-b078-4d28-b570-724eaf2a51e1",
+      "name": "Male Guidelines",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "SzRZ0XcBxQ93DmM4",
+          "name": "Layla's Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        760,
+        -440
+      ],
+      "id": "20969a81-bee6-4c6c-9311-7a21676d85bd",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1GU_LK3H-zB2Tnjsa7LYXRt9tNwzSS285qwcU97WJ9VI",
+          "mode": "list",
+          "cachedResultName": "Final Test Medical Messages",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GU_LK3H-zB2Tnjsa7LYXRt9tNwzSS285qwcU97WJ9VI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 770570420,
+          "mode": "list",
+          "cachedResultName": "General Messages - Motivational",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GU_LK3H-zB2Tnjsa7LYXRt9tNwzSS285qwcU97WJ9VI/edit#gid=770570420"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Message Title": "={{ $json.message.title }}",
+            "Message Content": "={{ $json.message.personalized_content }}",
+            "Message Title Arabic": "={{ $json.message.title_ar }}",
+            "Message Content Arabic": "={{ $json.message.personalized_content_ar }}"
+          },
+          "matchingColumns": [
+            "Message Title"
+          ],
+          "schema": [
+            {
+              "id": "Condition",
+              "displayName": "Condition",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message Category",
+              "displayName": "Message Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message Title",
+              "displayName": "Message Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message Content",
+              "displayName": "Message Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message Title Arabic",
+              "displayName": "Message Title Arabic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message Content Arabic",
+              "displayName": "Message Content Arabic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reminder Content Arabic",
+              "displayName": "Reminder Content Arabic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reminder Content Arabic",
+              "displayName": "Reminder Content Arabic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1620,
+        20
+      ],
+      "id": "b5ee9621-f3f4-4b5a-a56b-0fa909905b81",
+      "name": "General Motivational Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gsiIfMqpSgtD3EPk",
+          "name": "Layla's Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"New Day, New Start\",\n  \"personalized_content\": \"Sara, every day brings space to breathe easier and feel calmer. You're doing better than you think.\",\n  \"title_ar\": \"يوم جديد، بداية جديدة\",\n  \"personalized_content_ar\": \"سارة، كل يوم يمنحك فرصة للتنفس براحة وتهدئة القلق. أنتِ أقوى مما تظنين.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1700,
+        560
+      ],
+      "id": "b6248e7a-d9d4-44ef-b3ce-787b87e1e680",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Patient name: {{ $json.patient_profile.name }}\nPatient age: {{ $json.patient_profile.age }}\nPatient gender: {{ $json.patient_profile.gender }}\nPatient conditions: {{ $json.patient_profile.conditions }}\nPatient tone preference: {{ $json.patient_profile.preferences.tone }}\nPatient's diet: {{ $json.patient_profile.preferences.diet }}\nPatient's preferred activity:{{ $json.patient_profile.preferences.activity }}\nPatient pregnancy status: {{ $json.patient_profile.pregnancy }}\n\n\n\nEnglish Message title: {{ $('Test Medical Messages').item.json['Message Title'] }}\nEnglish Message content: {{ $('Test Medical Messages').item.json['Message Content'] }}\nArabic Message title: {{ $('Test Medical Messages').item.json['Message Title Arabic'] }}\nArabic Message content: {{ $('Test Medical Messages').item.json['Message Content Arabic'] }}\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a medical assistant that personalizes{{ $('Test Medical Messages').item.json['Message Category'] }}  supportive medical messages for patients. Your goal is to tailor the tone and content of a short message based on the patient’s:\n- Name\n- Age\n- Gender\n- Health conditions\n- Preferences\n\nThe content is as follows:\nEnglish Message title: {{ $('Test Medical Messages').item.json['Message Title'] }}\n\nEnglish Message content: {{ $('Test Medical Messages').item.json['Message Content'] }}\n\nArabic Message title: {{ $('Test Medical Messages').item.json['Message Title Arabic'] }}\n\nArabic Message content: {{ $('Test Medical Messages').item.json['Message Content Arabic'] }}\n\nYou will also receive a generic message (in English and Arabic) that should be used as the base content. Your output must be:\n- Personal and human-like\n- Supportive, gentle, and warm\n- Emotionally intelligent — never clinical\n- No more than **2 short sentences**\n- Returned in **JSON format**\n- Including both English and Arabic versions of titles and content\n\nOnly personalize the **content**. Do not change the title.\n\nYou must return exactly four fields, using these exact keys:\n\n- \"title\"\n- \"personalized_content\"\n- \"title_ar\"\n- \"personalized_content_ar\"\n\nDo not invent new field names (like personal_name_content_ar, arabic_text, etc.)  If any field is missing, the response is invalid and will fail to parse.\n\n---\nBuild off of the original content ({{ $('Test Medical Messages').item.json['Message Content'] }}) and do make sure the message has the exact same intent and point\n\n---\n\n### Personalization Rules:\n-Use the message title ({{ $('Test Medical Messages').item.json['Message Title'] }}) to guide you\n- Use the **original message as the base** ({{ $('Test Medical Messages').item.json['Message Content'] }}). Personalize around it, but do not replace or ignore its intent or action.\n- Every message must have a **unique sentence structure**. Vary how it begins, its rhythm, and use of punctuation.\n- Do **NOT start** every message with the patient’s condition or name.\n- **Use the patient’s name in about 50% of messages.** If you use it, vary its placement (beginning, middle, or end). If you don’t use it, the message must still feel personalized and warm.\n- You may reference the patient’s conditions **indirectly and naturally**, using language like:\n  - “when breathing feels heavy”\n  - “through skin flare-ups”\n  - “despite joint pain”\n  - “during blood pressure swings”\n- It’s okay if the condition is not mentioned directly, as long as the message feels appropriate and encouraging.\n- Never mention conditions that are not in the patient’s condition list.\n\n### Patient Age-related rules:\n{{ $('Guidelines').item.json.guidelines.age_group_guidelines }}\n\n### Patient Gender-specific rules:\n{{ $('Guidelines').item.json.guidelines.gender_guidelines }}\n{{ $('Guidelines').item.json.guidelines.pregnancy_guidelines }}\n\n### Patient diet guidelines:\n{{ $json.guidelines.diet_guidelines }}\n\n### Patient preferred activity rules:\n{{ $json.guidelines.activity_guidelines }}\n\n--\n\nUse a strictly {{ $json.patient_profile.preferences.tone }} tone. {{ $json.guidelines.tone_guidelines }}\n\nThis message is a **general supportive reminder**. It should offer emotional encouragement, motivation, or reassurance — especially for patients managing chronic conditions. Your goal is to help the patient feel seen, comforted, and gently reminded that small efforts matter. Messages should sound like a caring check-in from someone who understands what they’re going through. Tone should be warm, calm, and uplifting. Use gentle imagery or everyday language (e.g., “step by step,” “quiet victories,” “new day”). The focus is not on actions, but on **mental and emotional support**. Never instruct the patient to do something — instead, encourage them **to believe in their ability** to get through the day or stay consistent.\n\n### EXAMPLES\n**Example 1: Uses patient’s name at the end**\nInput:\n{\n  \"name\": \"Ahmed\",\n  \"age\": 60,\n  \"gender\": \"male\",\n  \"conditions\": [\"diabetes\", \"hypertension\"],\n  \"preferences\": {\n    \"tone\": \"reassuring\",\n    \"diet\": \"balanced\",\n    \"activity\": \"walking\"\n  },\n  \"pregnancy\": false,\n  \"age_group\": 1,\n  \"message\": {\n    \"title\": \"New Day, New Start\",\n    \"content\": \"Each day brings a chance to make positive changes. Take it one step at a time.\",\n    \"title_ar\": \"يوم جديد، بداية جديدة\",\n    \"content_ar\": \"كل يوم يجلب فرصة لإجراء تغييرات إيجابية. خطوة واحدة في كل مرة.\"\n  }\n}\n\nOutput:\n{\n  \"title\": \"New Day, New Start\",\n  \"personalized_content\": \"There’s strength in showing up, especially on days when your energy dips. Progress is still progress, Ahmed.\",\n  \"title_ar\": \"يوم جديد، بداية جديدة\",\n  \"personalized_content_ar\": \"هناك قوة في الاستمرار، خاصة في الأيام التي تنخفض فيها طاقتك. التقدم هو التقدم، مهما كان بسيطاً، أحمد.\"\n}\n---\n\n**Example 2: Uses patient’s name in the middle, pregnant women but does NOT mention baby**\nInput:\n{\n  \"name\": \"Layla\",\n  \"age\": 35,\n  \"gender\": \"female\",\n  \"conditions\": [\"eczema\", \"high blood pressure\"],\n  \"preferences\": {\n    \"tone\": \"gentle\",\n    \"diet\": \"low fat\",\n    \"activity\": \"yoga\"\n  },\n  \"pregnancy\": true,\n  \"age_group\": 0,\n  \"message\": {\n    \"title\": \"Small Wins Matter\",\n    \"content\": \"Celebrate every small step forward. They build up to big successes.\",\n    \"title_ar\": \"النجاحات الصغيرة مهمة\",\n    \"content_ar\": \"احتفل بكل خطوة صغيرة نحو الأمام. فهي تراكُم لتشكل نجاحات كبيرة.\"\n  }\n}\n\nOutput:\n{\n  \"title\": \"Small Wins Matter\",\n  \"personalized_content\": \"Even the smallest steps matter, Layla, especially during this time of change and strength.\",\n  \"title_ar\": \"النجاحات الصغيرة مهمة\",\n  \"personalized_content_ar\": \"حتى أصغر الخطوات تُحدث فرقاً، ليلى، خاصة خلال هذا الوقت من التغيير والقوة.\"\n}\n---\n\n**Example 3: Does not use patient’s name**\nInput:\n{\n  \"name\": \"Mona\",\n  \"age\": 50,\n  \"gender\": \"female\",\n  \"conditions\": [\"arthritis, type 2 diabetes\"],\n  \"preferences\": {\n    \"tone\": \"warm\",\n    \"diet\": \"low carb\",\n    \"activity\": \"pilates\"\n  },\n  \"pregnancy\": false,\n  \"age_group\": 1,\n  \"message\": {\n    \"title\": \"Keep Moving Forward\",\n    \"content\": \"Every step forward, no matter how small, is progress.\",\n    \"title_ar\": \"استمري في التقدم\",\n    \"content_ar\": \"كل خطوة إلى الأمام، مهما كانت صغيرة، تُعد تقدماً.\"\n  }\n}\n\nOutput:\n{\n  \"title\": \"Keep Moving Forward\",\n  \"personalized_content\": \"Even through joint discomfort, every step is a quiet victory. Keep moving at your own pace.\",\n  \"title_ar\": \"استمري في التقدم\",\n  \"personalized_content_ar\": \"حتى مع آلام المفاصل، كل خطوة تُعد نصراً هادئاً. تابعي التقدم بوتيرتك الخاصة.\"\n}\n\n**Example 4: Pregnant women and mentions baby**\nInput:\n{\n  \"name\": \"Aisha\",\n  \"age\": 36,\n  \"gender\": \"female\",\n  \"conditions\": [\"anxiety \"],\n  \"preferences\": {\n    \"tone\": \"warm\",\n    \"diet\": \"keto\",\n    \"activity\": \"dancing\"\n  },\n  \"pregnancy\": true,\n  \"age_group\": 1,\n  \"message\": {\n    \"title\": \"Believe in Yourself\",\n    \"content\": \"Believing in yourself is the first step to success. You’ve got this.\",\n    \"title_ar\": \"ثق بنفسك\",\n    \"content_ar\": \"الإيمان بنفسك هو الخطوة الأولى نحو النجاح. أنت قادر على ذلك.\"\n  }\n}\n\nOutput:\n{\n  \"title\": \"Believe in Yourself\",\n  \"personalized_content\": \"Believing in yourself, even when anxiety hits, is the first step to success for you and your baby. You've got this. \",\n  \"title_ar\": \"ثق بنفسك\",\n  \"personalized_content_ar\": \"الثقة بنفسكِ، حتى مع القلق، هي الخطوة الأولى نحو النجاح لكِ ولطفلكِ. أنتِ قادرة على ذلك.\"\n}\n\n---\n\nNow generate a JSON output for the next patient and message in the same format.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1540,
+        340
+      ],
+      "id": "2dfb1fe4-6218-49be-a660-ff9bc7b404b7",
+      "name": "Basic LLM Chain 3"
+    },
+    {
+      "parameters": {
+        "batchSize": "=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        240
+      ],
+      "id": "c970a7c8-34be-4f90-827e-cb30f0adcfd8",
+      "name": "Loop Over Items 3"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-maverick-17b-128e-instruct",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        560
+      ],
+      "id": "d6f8daa0-9762-48b7-b1ae-0e48ef5e1fcf",
+      "name": "Groq Chat Model 3",
+      "credentials": {
+        "groqApi": {
+          "id": "ZofkBZbxP58Lgg5q",
+          "name": "Intern's GROQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfor (const item of $input.all()) {\n  const name = $('PatientInformation').first().json.name;\n  const age = $('PatientInformation').first().json.age;\n  const gender = $('PatientInformation').first().json.gender;\n  const conditions = $('PatientInformation').first().json.conditions || [];\n\n  const messageTitle = item.json.output.title;\n  const messageContent = item.json.output.personalized_content;\n  const messageTitleArabic = item.json.output.title_ar;\n  const messageContentArabic = item.json.output.personalized_content_ar;\n\n\n  \n  output.push({\n    patient_profile: {\n      name: name,\n      age: age,\n      gender: gender,\n      conditions: conditions\n    },\n    message: {\n      title: messageTitle,\n      personalized_content: messageContent,\n      title_ar: messageTitleArabic,\n      personalized_content_ar: messageContentArabic\n    }\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        20
+      ],
+      "id": "554b0a54-0c5e-45b9-8b08-70e45f1bcfdd",
+      "name": "Final message3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nconst profile = $('Assemble Profile').first().json.patientInformation;\nconst ageGroup = profile.age_group;\nconst isPregnant = $('PatientInformation').first().json.pregnancy === true;\nconst gender = profile.gender;\n\n// Content placeholders\nlet ageGroupContent = '';\nlet genderContent = '';\nlet pregnancyContent = '';\n\n// Load age-specific prompt content from Group 0/1/2\ntry {\n  ageGroupContent = $(`Group ${ageGroup}`).first().json.content || '[Missing or malformed age group content]';\n} catch (error) {\n  ageGroupContent = '[Error accessing age group content]';\n}\n\n// Load gender-specific content (from Female or Male Guidelines)\ntry {\n  if (gender === \"female\") {\n    genderContent = $('Female Guidelines').first().json.content || '[Missing female content]';\n  } else if (gender === \"male\") {\n    genderContent = $('Male Guidelines').first().json.content || '[Missing male content]';\n  }\n} catch (error) {\n  genderContent = '[Error accessing gender-specific guidelines]';\n}\n\n// Load pregnancy-specific content (only if pregnant)\ntry {\n  if (isPregnant) {\n    pregnancyContent = $('Pregnancy guidelines').first().json.content || '[Missing pregnancy content]';\n  } else {\n    pregnancyContent = ''; // Set to empty if not pregnant\n  }\n} catch (error) {\n  pregnancyContent = '[Error accessing pregnancy guidelines]';\n}\n\n// Get the current message in the loop\nconst message = $input.item.json;\n\n// Build final object\noutput.push({\n  json: {\n    patient_profile: profile,\n    message: message,\n    age_group_guidelines: ageGroupContent,\n    gender_guidelines: genderContent,\n    pregnancy_guidelines: pregnancyContent\n  }\n});\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        -220
+      ],
+      "id": "7e7eec61-de4b-43fa-9d5e-dcac5a8df5b6",
+      "name": "Assemble Profile3"
+    },
+    {
+      "parameters": {
+        "jsCode": "  const groupGuidelines = {\n  0: \"Tone should be optimistic, energizing, and relatable, but not overly casual. Messages should inspire confidence and forward momentum. It's okay to mention everyday stress, but keep the message empowering. Focus on resilience, identity, and self-trust. Many in this age group are building careers, relationships, and habits — speak to their autonomy and adaptability. Avoid messaging that implies frailty or slowing down. Do not use slang or emojis; keep it warm, crisp, and emotionally intelligent.\",\n  1: \"Use a steady, respectful, affirming tone. Acknowledge the reality of health maintenance, life transitions, and juggling responsibilities (career, caregiving, health). Emphasize dignity, consistency, and agency. Reassure without being patronizing, avoid messages that sound like advice; instead, offer encouragement and validation.\",\n  2: \"Use a warm, dignified, and gently reassuring tone. Messages should honor lived experience and resilience. Avoid infantilizing language or motivational clichés. Speak to wisdom, endurance, and grace, not decline. It's okay to acknowledge slower pace, fatigue, or routine health needs, but never as limitations — always in the context of continued value and self-care.\"\n};\n\nconst femaleGuidanceText = `Recognize how hormonal fluctuations (menstrual cycle, pregnancy, perimenopause) can affect energy, mood, or symptoms — normalize rather than pathologize. Women are more likely to experience autoimmune diseases and underdiagnosed cardiac symptoms — affirm body awareness and persistence in seeking care. Use messages that encourage balance, self-trust, and emotional resilience. Avoid any language that feels patronizing or overly “soft” — affirm decisiveness and intellect while being emotionally attuned.`;\n\nconst maleGuidanceText = `Emphasize the importance of monitoring blood pressure, cholesterol, and heart health, as cardiovascular issues tend to manifest earlier in men. Normalize proactive health behavior — men are less likely to seek help or follow up on symptoms early. Affirm strength in vulnerability and consistency. Encourage early action on symptoms like fatigue, shortness of breath, or mood changes — men often delay care until advanced stages. Avoid minimizing emotional aspects — be factual but compassionate, showing that health isn’t only physical.`;\n\nconst pregnancyGuidanceText = `Use a gentle, nurturing tone that affirms the physical and emotional experience of pregnancy. Acknowledge increased physical effort without dramatizing or using patronizing language. Keep messages calm and emotionally supportive—never clinical, urgent, or overly celebratory. Avoid medical advice or suggesting strenuous activity. Don’t assume pregnancy is joyful; refrain from clichés like “you’re glowing” unless in the original message. You may reference the baby in 25–40% of messages, but vary phrasing and focus mostly on the mother’s strength, comfort, and emotional journey. Use soft references like “during this time” to ground the message.`;\n\nconst activityGuidanceMap = {\n  \"body weight exercises\": \"Use supportive language that values flexibility and strength without needing equipment. Great for patients with limited access or time.\",\n  \"cardio exercises\": \"Encourage consistency and energy. Highlight heart health and stamina improvements. Use words like 'boost', 'energize', or 'refresh'.\",\n  \"dancing\": \"Messages can be playful or joyful. Emphasize fun, rhythm, and expression. Words like 'move freely' or 'feel the beat' work well.\",\n  \"pilates\": \"Use calm, mindful phrasing. Reference control, core strength, or breath. Reinforce the value of steady effort.\",\n  \"resistance band exercises\": \"Highlight small but powerful movements. Reinforce that strength doesn’t require heavy equipment.\",\n  \"stretching routines\": \"Emphasize release, flexibility, and flow. Words like 'ease', 'open', and 'gentle' can be used.\",\n  \"swimming\": \"Mention fluid motion, low impact, or full-body benefits. Messages should feel refreshing and encouraging.\",\n  \"walking\": \"Focus on ease and accessibility. Mention pacing, fresh air, or clearing the mind. Great for all fitness levels.\",\n  \"wateraerobics\": \"Encourage low-impact movement and fun. Highlight joint support and buoyancy benefits.\",\n  \"weightlifting\": \"Reinforce discipline, progress, and muscle strength. Use confident, affirming language like 'build power' or 'stay strong'.\",\n  \"yoga\": \"Incorporate calm and awareness. Mention breath, balance, and mind-body connection. Use soothing tone.\"\n};\n\nconst toneGuidanceMap = {\n  \"uplifting\": \"Messages should be motivating and energizing. Use positive reinforcement and emphasize progress or strength. Examples include: 'You’re doing great—keep it up!'\",\n  \"gentle\": \"Use soft, non-demanding language that feels caring and calm. Avoid urgency or pressure. For example: 'Just a gentle nudge to check your numbers today.'\",\n  \"warm\": \"Emphasize emotional connection and empathy. Use friendly, comforting language. For example: 'We’re here with you—take a moment to check in.'\",\n  \"reassuring\": \"Focus on safety, confidence, and reducing anxiety. Normalize small setbacks. Example: 'It’s okay to take your time—logging now can help.'\",\n  \"direct\": \"Be clear, concise, and to the point, but still respectful. Avoid overly softening or excessive emotion. Example: 'Please log your glucose values now.'\",\n  \"encouraging\": \"Highlight effort and growth. Use language that fosters self-belief and motivation. Example: 'You’ve got this—small steps make a big impact.'\",\n  \"compassionate\": \"Validate emotional and physical effort, especially in challenging circumstances. Stay supportive and affirming. Example: 'We know this isn’t easy—your care matters.'\",\n  \"neutral\": \"Keep language balanced and professional. Avoid emotional cues unless explicitly included in the base message. Example: 'Remember to log your glucose today.'\"\n};\n\nconst dietGuidanceMap = {\n  \"balanced\": \"Encourage variety and portion awareness. Support steady habits without emphasizing restriction. Celebrate a sustainable approach.\",\n  \"high protein\": \"Reinforce consistency in protein intake. Encourage tracking to support energy, strength, and fullness. Avoid messaging that emphasizes carbs or fats.\",\n  \"keto\": \"Highlight fat-fueled energy and strict carb limits. Encourage awareness of net carbs and tracking for ketosis support.\",\n  \"low carb\": \"Affirm carb-conscious choices and disciplined eating. Avoid referencing carb-rich foods. Encourage consistency.\",\n  \"low fat\": \"Support lighter meal choices and portion awareness. Reinforce moderation without moralizing food choices.\",\n  \"meal replacement\": \"Encourage routine and simplicity in tracking intake. Acknowledge effort in following a structured plan. Avoid suggesting full meal prep.\",\n  \"very low calorie\": \"Use a gentle, supportive tone. Emphasize nourishment, consistency, and energy preservation. Avoid messages that add pressure or guilt.\"\n};\n\nconst output = [];\n\nfor (const item of $input.all()) {\n  const rawInfo = $('PatientInformation').first()?.json || {};\n  const patient = item.json.patient_profile || rawInfo;\n\n  const name = patient.name;\n  const age = patient.age;\n  const gender = patient.gender;\n  const conditions = patient.conditions || [];\n  const journey = patient.journey || null;\n  const preferences = patient.preferences?.preferences || patient.preferences || {};\n  const pregnancy = patient.pregnancy === true;\n\n  // Assign age group\n  let ageGroup = null;\n  if (age >= 18 && age <= 39) ageGroup = 0;\n  else if (age >= 40 && age <= 64) ageGroup = 1;\n  else if (age >= 65) ageGroup = 2;\n\n  const message = item.json.message || {\n    title: item.json[\"Reminder Title\"],\n    content: item.json[\"Reminder Content\"],\n    title_ar: item.json[\"Reminder Title Arabic\"],\n    content_ar: item.json[\"Reminder Content Arabic\"]\n  };\n\n  const ageGuideline = groupGuidelines[ageGroup] || \"Age guidelines not available.\";\n  const genderGuideline = gender === \"female\" ? femaleGuidanceText : gender === \"male\" ? maleGuidanceText : \"\";\n  const pregnancyGuideline = pregnancy ? pregnancyGuidanceText : \"\";\n\n  const activity = preferences.activity?.toLowerCase?.();\n  const activityGuideline = activityGuidanceMap[activity] || \"Use exercise-related messages that align with the patient’s preferred movement style.\";\n\n  const tone = preferences.tone?.toLowerCase?.();\n  const toneGuideline = toneGuidanceMap[tone] || \"Use a respectful and human tone that aligns with the patient's preferences.\";\n\n  const diet = preferences.diet?.toLowerCase?.() || \"balanced\";\n  const dietGuideline = dietGuidanceMap[diet] || dietGuidanceMap[\"balanced\"];\n\n  output.push({\n    patient_profile: {\n      name,\n      age,\n      gender,\n      conditions,\n      journey,\n      preferences,\n      pregnancy,\n      age_group: ageGroup\n    },\n    message: {\n      title: message.title,\n      content: message.content,\n      title_ar: message.title_ar,\n      content_ar: message.content_ar\n    },\n    guidelines: {\n      age_group_guidelines: ageGuideline,\n      gender_guidelines: genderGuideline,\n      ...(pregnancy ? { pregnancy_guidelines: pregnancyGuideline } : {}),\n      activity_guidelines: activityGuideline,\n      tone_guidelines: toneGuideline,\n      diet_guidelines: dietGuideline\n    }\n  });\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        860,
+        240
+      ],
+      "id": "62139f68-2415-4890-bd5c-d2b47dd0dd3b",
+      "name": "Guidelines"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4876fdd2-4b34-441a-9d44-2fd78e3502e6",
+              "name": "name",
+              "value": "Alex",
+              "type": "string"
+            },
+            {
+              "id": "d65941b5-334f-430f-b51a-66050df6ea4d",
+              "name": "age",
+              "value": 27,
+              "type": "number"
+            },
+            {
+              "id": "38eb29bf-feed-4a34-9984-e9b96e1ecc08",
+              "name": "gender",
+              "value": "female",
+              "type": "string"
+            },
+            {
+              "id": "3c0e8de6-7c30-463f-9232-8655a40fd5b0",
+              "name": "journey",
+              "value": "diabetes",
+              "type": "string"
+            },
+            {
+              "id": "f266f73a-ec8d-48e8-8420-ca929d85cdef",
+              "name": "pregnancy",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "12ee973c-9fe5-4a35-9f3b-80630140fefa",
+              "name": "conditions",
+              "value": "={{[\"high blood pressure\", \"Type 2 Diabetes\"]}}",
+              "type": "array"
+            },
+            {
+              "id": "810b482a-c2bf-4118-b92f-38d4dcd28b24",
+              "name": "preferences",
+              "value": "={\n  \"preferences\": {\n     \"tone\": \"uplifting\",\n     \"diet\": \"low-carb\",\n     \"activity\": \"walking\"\n\n   }}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        240
+      ],
+      "id": "ac081910-ad11-4e67-a2fc-249dd7b44ae5",
+      "name": "PatientInformation"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-19T06:30:51.524Z",
+      "updatedAt": "2025-06-19T06:30:51.524Z",
+      "role": "workflow:owner",
+      "workflowId": "HjKafNSbvqDIafVY",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-24T08:09:43.000Z",
+  "versionId": "28deaf50-3910-4e74-8239-daa9019a78a1"
+}
