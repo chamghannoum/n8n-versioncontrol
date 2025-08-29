@@ -1,0 +1,309 @@
+{
+  "active": false,
+  "connections": {
+    "Call Predict Model": {
+      "main": [
+        [
+          {
+            "node": "processedData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Call Predict Model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SDCP_criteria": {
+      "main": [
+        [
+          {
+            "node": "normalizeMapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "processedData": {
+      "main": [
+        [
+          {
+            "node": "SDCP_criteria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-25T06:15:42.516Z",
+  "id": "4fU1ss08G7a5OjnT",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Predict Model (testing)",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://example.com",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json}} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        64,
+        48
+      ],
+      "id": "d9138112-c364-47fe-b976-38b72c031286",
+      "name": "Call Predict Model"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7acbf3a2-79ab-4d3a-a2ed-44f94687beb1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        48
+      ],
+      "id": "cf6f9f39-944c-45a2-8a04-97988090a742",
+      "name": "Webhook",
+      "webhookId": "7acbf3a2-79ab-4d3a-a2ed-44f94687beb1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const processedData = $('processedData').first().json; \nconst rawSheetsData = $('SDCP_criteria').all(); \nconst originalPatientData = $('Webhook').first().json;\n\n// Extract the actual criteria data\nlet criteriaArray = [];\nif (Array.isArray(rawSheetsData)) {\n  rawSheetsData.forEach(sheet => {\n    if (sheet && sheet.json) {\n      if (Array.isArray(sheet.json)) {\n        criteriaArray = criteriaArray.concat(sheet.json);\n      } else {\n        criteriaArray.push(sheet.json);\n      }\n    } else if (Array.isArray(sheet)) {\n      criteriaArray = criteriaArray.concat(sheet);\n    } else if (sheet) {\n      criteriaArray.push(sheet);\n    }\n  });\n} else if (rawSheetsData && rawSheetsData.json) {\n  criteriaArray = Array.isArray(rawSheetsData.json) ? rawSheetsData.json : [rawSheetsData.json];\n} else {\n  criteriaArray = [rawSheetsData];\n}\n\n// Filter out empty/invalid entries\ncriteriaArray = criteriaArray.filter(item => \n  item && \n  (item['Field Name'] || item.Field_Name) && \n  (item['Field Name'] || item.Field_Name).trim() !== ''\n);\n\n// Dynamic feature-to-criteria matching function\nfunction findMatchingCriteria(featureName) {\n  const results = [];\n  const normalizedFeature = featureName.toLowerCase().replace(/[_-]/g, '');\n  \n  criteriaArray.forEach((criteria, index) => {\n    const fieldName = (criteria['Field Name'] || criteria.Field_Name || '').toLowerCase().replace(/[_-]/g, '');\n    const parameter = (criteria.Parameter || '').toLowerCase();\n    \n    if (!fieldName) return; \n    \n    let matchScore = 0;\n    let matchType = '';\n    \n    if (featureName === 'lab_systolic_bp') {\n      if (fieldName.includes('systolic') && fieldName.includes('blood')) {\n        matchScore = 1.0;\n        matchType = 'exact_systolic';\n      }\n    }\n    else if (featureName === 'lab_diastolic_bp') {\n      if (fieldName.includes('diastolic') && fieldName.includes('blood')) {\n        matchScore = 1.0;\n        matchType = 'exact_diastolic';\n      }\n    }\n    else if (featureName === 'lab_cholesterol') {\n      if (fieldName.includes('cholesterol') || parameter.includes('cholesterol')) {\n        matchScore = 0.95;\n        matchType = 'cholesterol_match';\n      }\n    }\n    else if (featureName.includes('glucose')) {\n      if (fieldName.includes('glucose') || parameter.includes('glucose')) {\n        matchScore = 0.9;\n        matchType = 'glucose_match';\n      }\n    }\n    else if (featureName.includes('hba1c')) {\n      if (fieldName.includes('hba1c') || parameter.includes('hba1c')) {\n        matchScore = 0.9;\n        matchType = 'hba1c_match';\n      }\n    }\n    else if (featureName.includes('age')) {\n      if (fieldName.includes('age')) {\n        matchScore = 0.95;\n        matchType = 'age_match';\n      }\n    }\n    else if (fieldName.includes(normalizedFeature) || normalizedFeature.includes(fieldName)) {\n      matchScore = 0.8;\n      matchType = 'generic';\n    }\n    \n    if (matchScore > 0) {\n      console.log(`  Match found: ${criteria['Field Name'] || criteria.Field_Name} (score: ${matchScore}, type: ${matchType})`);\n      results.push({\n        criteria,\n        matchScore,\n        matchType,\n        fieldName: criteria['Field Name'] || criteria.Field_Name\n      });\n    }\n  });\n  \n  const bestMatch = results.sort((a, b) => b.matchScore - a.matchScore)[0] || null;  \n  return bestMatch;\n}\n\n// Enhanced threshold parsing\nfunction parseThreshold(thresholdValue, fieldName = '') {\n  if (!thresholdValue || thresholdValue === 'N/A' || thresholdValue === '') return null;\n  \n  const str = thresholdValue.toString().trim();\n  \n  // Handle specific patterns\n  if (str.includes('>=')) {\n    const value = parseFloat(str.replace('>=', '').trim());\n    return { type: 'gte', value };\n  }\n  if (str.includes('<=')) {\n    const value = parseFloat(str.replace('<=', '').trim());\n    return { type: 'lte', value };\n  }\n  if (str.startsWith('> ') || (str.startsWith('>') && !str.startsWith('>='))) {\n    const value = parseFloat(str.replace('>', '').trim());\n    return { type: 'gt', value };\n  }\n  if (str.startsWith('< ') || (str.startsWith('<') && !str.startsWith('<='))) {\n    const value = parseFloat(str.replace('<', '').trim());\n    return { type: 'lt', value };\n  }\n  \n  // Handle ranges\n  const rangeMatch = str.match(/(\\d+(?:\\.\\d+)?)\\s*[-–]\\s*(\\d+(?:\\.\\d+)?)/);\n  if (rangeMatch) {\n    return {\n      type: 'range',\n      min: parseFloat(rangeMatch[1]),\n      max: parseFloat(rangeMatch[2])\n    };\n  }\n  \n  // Handle single numbers\n  const numValue = parseFloat(str);\n  if (!isNaN(numValue)) {\n    return { type: 'exact', value: numValue };\n  }\n  \n  // Handle text\n  return { type: 'text', value: str };\n}\n\n// Enhanced threshold checking\nfunction checkThreshold(value, threshold, fieldName = '') {\n  if (!threshold) return false;\n  \n  const numValue = parseFloat(value);\n  if (isNaN(numValue) && threshold.type !== 'text') return false;\n    \n  switch (threshold.type) {\n    case 'range':\n      const inRange = numValue >= threshold.min && numValue <= threshold.max;\n      console.log(`    Range check (${threshold.min}-${threshold.max}): ${inRange}`);\n      return inRange;\n    case 'gte':\n      const isGte = numValue >= threshold.value;\n      console.log(`    GTE check (>= ${threshold.value}): ${isGte}`);\n      return isGte;\n    case 'lte':\n      const isLte = numValue <= threshold.value;\n      console.log(`    LTE check (<= ${threshold.value}): ${isLte}`);\n      return isLte;\n    case 'gt':\n      const isGt = numValue > threshold.value;\n      console.log(`    GT check (> ${threshold.value}): ${isGt}`);\n      return isGt;\n    case 'lt':\n      const isLt = numValue < threshold.value;\n      console.log(`    LT check (< ${threshold.value}): ${isLt}`);\n      return isLt;\n    case 'exact':\n      return numValue === threshold.value;\n    case 'text':\n      return value.toString().toLowerCase().includes(threshold.value.toLowerCase());\n    default:\n      return false;\n  }\n}\n\n// Enhanced risk level determination \nfunction getRiskLevel(value, criteria) {\n  if (!criteria || value === null || value === undefined) return 'unknown';\n  \n  const fieldName = criteria['Field Name'] || criteria.Field_Name;\n  \n  const thresholds = {\n    high_risk: parseThreshold(criteria['High Risk Threshold'], fieldName),\n    max_risk: parseThreshold(criteria['Max. Risk Threshold'], fieldName),\n    min_risk: parseThreshold(criteria['Min. Risk Threshold'], fieldName),\n    normal: parseThreshold(criteria['Normal Range/Value'], fieldName)\n  };  \n  // Check thresholds in order of severity\n  if (thresholds.high_risk && checkThreshold(value, thresholds.high_risk, fieldName)) {\n    console.log(`  Result: high_risk`);\n    return 'high_risk';\n  }\n  if (thresholds.max_risk && checkThreshold(value, thresholds.max_risk, fieldName)) {\n    console.log(`  Result: moderate_risk`);\n    return 'moderate_risk';\n  }\n  if (thresholds.min_risk && checkThreshold(value, thresholds.min_risk, fieldName)) {\n    console.log(`  Result: mild_risk`);\n    return 'mild_risk';\n  }\n  if (thresholds.normal && checkThreshold(value, thresholds.normal, fieldName)) {\n    console.log(`  Result: normal`);\n    return 'normal';\n  }\n  return 'unknown';\n}\n\n// Special feature handling\nfunction handleSpecialFeatures(feature, value, direction) {\n  const featureName = feature.feature;\n  \n  // Handle diagnosis codes\n  if (featureName.startsWith('diagnosis_code_')) {\n    if (value === 'Not Present') {\n      return {\n        actual_risk_level: 'normal',\n        expected_direction: -1,\n        aligned: direction === 'decreased risk'\n      };\n    } else {\n      const isDiabetesCode = value.startsWith('E10') || value.startsWith('E11');\n      const isHypertensionCode = value === 'I10';\n      \n      if (isDiabetesCode) {\n        return {\n          actual_risk_level: 'high_risk',\n          expected_direction: 1,\n          aligned: direction === 'increased risk'\n        };\n      } else if (isHypertensionCode) {\n        return {\n          actual_risk_level: 'moderate_risk',\n          expected_direction: 1,\n          aligned: direction === 'increased risk'\n        };\n      }\n    }\n  }\n  \n  // Handle medication codes\n  if (featureName.startsWith('code_')) {\n    const medType = featureName.replace('code_', '');\n    \n    if (value === 'Not Prescribed') {\n      if (medType === 'diabetes') {\n        return {\n          actual_risk_level: 'normal',\n          expected_direction: 1,\n          aligned: direction === 'increased risk'\n        };\n      } else if (medType === 'metformin') {\n        return {\n          actual_risk_level: 'untreated',\n          expected_direction: 1,\n          aligned: direction === 'increased risk'\n        };\n      }\n    } else {\n      if (medType === 'metformin') {\n        return {\n          actual_risk_level: 'treated',\n          expected_direction: -1,\n          aligned: direction === 'decreased risk'\n        };\n      }\n    }\n  }\n  \n  // Handle text features\n  if (featureName.startsWith('text_')) {\n    if (featureName === 'text_control') {\n      const hasPositiveControl = value.toLowerCase().includes('control') || \n                                value.toLowerCase().includes('improved') ||\n                                value.toLowerCase().includes('adherence');\n      \n      return {\n        actual_risk_level: hasPositiveControl ? 'positive_mention' : 'neutral',\n        expected_direction: hasPositiveControl ? -1 : 0,\n        aligned: hasPositiveControl && direction === 'decreased risk'\n      };\n    }\n  }\n  \n  // Handle encounter type\n  if (featureName === 'encounter_type') {\n    const isRoutine = value === 'Follow-up' || value === 'Routine';\n    return {\n      actual_risk_level: isRoutine ? 'routine' : 'urgent',\n      expected_direction: isRoutine ? -1 : 1,\n      aligned: (isRoutine && direction === 'decreased risk') || \n               (!isRoutine && direction === 'increased risk')\n    };\n  }\n  \n  return null;\n}\n\n// Main validation function\nfunction validateFeatures(featuresArray) {\n  const validations = [];\n    \n  featuresArray.forEach((feature, index) => {    \n    const match = findMatchingCriteria(feature.feature);\n    \n    let validation = {\n      encounter_date: feature.encounter_date,\n      feature: feature.feature,\n      actual_value: feature.value,\n      predicted_direction: feature.direction,\n      aligned: false,\n      actual_risk_level: 'unknown',\n      expected_direction: null,\n      match_confidence: match ? match.matchScore : 0,\n      match_type: match ? match.matchType : 'no_match',\n      guideline_reference: '',\n      notes: []\n    };\n    \n    const specialResult = handleSpecialFeatures(feature, feature.value, feature.direction);\n    \n    if (specialResult) {\n      validation.actual_risk_level = specialResult.actual_risk_level;\n      validation.expected_direction = specialResult.expected_direction;\n      validation.aligned = specialResult.aligned;\n      validation.notes.push('Handled via special logic');\n    }\n    // Use matched criteria\n    else if (match && feature.value !== 'Unknown' && feature.value !== 'Not Present' && feature.value !== 'Not Prescribed') {\n      const criteria = match.criteria;\n      validation.guideline_reference = criteria['SDCP Reference'] || '';\n      \n      const actualRiskLevel = getRiskLevel(feature.value, criteria);\n      validation.actual_risk_level = actualRiskLevel;\n      \n      // Determine expected direction based on risk level\n      const isHighRisk = ['high_risk', 'moderate_risk'].includes(actualRiskLevel);\n      validation.expected_direction = isHighRisk ? 1 : -1;\n      \n      // Check alignment\n      const predictedIncreasedRisk = feature.direction === 'increased risk';\n      validation.aligned = (isHighRisk && predictedIncreasedRisk) || \n                          (!isHighRisk && !predictedIncreasedRisk);\n      \n      validation.notes.push(`Matched to ${criteria['Field Name'] || criteria.Field_Name} (${Math.round(match.matchScore * 100)}% confidence)`);\n    }\n    else {\n      validation.notes.push('No matching criteria found or invalid value');\n    }\n    \n    validations.push(validation);\n  });\n  \n  return validations;\n}\nconst validations = validateFeatures(processedData.features_for_alignment);\n\n// Calculate summary statistics\nconst totalFeatures = validations.length;\nconst alignedFeatures = validations.filter(v => v.aligned).length;\nconst matchedFeatures = validations.filter(v => v.match_confidence > 0.7).length;\nconst alignmentPercentage = totalFeatures > 0 ? (alignedFeatures / totalFeatures) * 100 : 0;\n\nreturn {\n  patient_id: originalPatientData.patient_id,\n  patient_age: processedData.age,\n  prediction_risk_score: processedData.risk_score,\n  prediction_stratification: processedData.stratification,\n  validation_summary: {\n    total_features_validated: totalFeatures,\n    matched_features_count: matchedFeatures,\n    aligned_features_count: alignedFeatures,\n    alignment_percentage: Math.round(alignmentPercentage * 100) / 100,\n    overall_alignment: alignmentPercentage >= 70 ? 'ALIGNED' : 'NOT_ALIGNED',\n    match_success_rate: Math.round((matchedFeatures / totalFeatures) * 100)\n  },\n  detailed_validations: validations,\n  validation_timestamp: new Date().toISOString(),\n  guidelines_source: 'SDCP Guidelines 2021'\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        48
+      ],
+      "id": "944d1660-c5c1-46de-be7f-02f9beee31da",
+      "name": "normalizeMapping"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ANdZ7Lsp-Ii6S3ayPQUUfqxX8cDHEKBM2FVHu4fT4eQ",
+          "mode": "list",
+          "cachedResultName": "diabetes_risk_validation_criteria",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ANdZ7Lsp-Ii6S3ayPQUUfqxX8cDHEKBM2FVHu4fT4eQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1015196392,
+          "mode": "list",
+          "cachedResultName": "diabetes_risk_validation_criter",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ANdZ7Lsp-Ii6S3ayPQUUfqxX8cDHEKBM2FVHu4fT4eQ/edit#gid=1015196392"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        48
+      ],
+      "id": "3b4e9487-ad75-4a1a-9bba-4f30415a87f9",
+      "name": "SDCP_criteria",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zikqy2OQmH7886X6",
+          "name": "Cham's Google Sheets Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const dob = new Date($('Webhook').first().json.date_of_birth);\nconst today = new Date();\n\n// Calculate age\nlet age = today.getFullYear() - dob.getFullYear();\nconst m = today.getMonth() - dob.getMonth();\nif (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {\n  age--;\n}\n\n// Get inputs\nconst patient = $('Webhook').first().json;\nconst encounters = patient.encounters || [];\n\nconst explanationSummary = $('Call Predict Model').first().json.explanation_summary || {};\nconst directionEncoding = $('Call Predict Model').first().json.direction_encoding || {};\nconst riskScore = $('Call Predict Model').first().json.risk_score;\nconst stratification = $('Call Predict Model').first().json.stratification;\n\nconst featureToVitalMap = {\n  'lab_systolic_bp': 'systolic_bp_mmHg',\n  'lab_diastolic_bp': 'diastolic_bp_mmHg',\n  'lab_cholesterol': 'cholesterol_mg_dL',\n  'vital-sign-systolic': 'systolic_bp_mmHg',\n  'vital-sign-diastolic': 'diastolic_bp_mmHg',\n  'pulse': 'heart_rate_bpm',\n  'temperature': 'temperature_c',\n  'respiratory-rate': 'respiratory_rate_bpm',\n  'oxygen-saturation': 'spo2_percent',\n  'vital-sign-weight': 'weight_kg',\n  'vital-sign-height': 'height_cm'\n};\n\nconst output = [];\n\n// Loop over explanation dates\nfor (const [date, features] of Object.entries(explanationSummary)) {\n  // Try to find the matching encounter\n  const encounter = encounters.find(e => e.encounter_date === date);\n  const vitals = encounter?.vital_signs || {};\n  const diagnosis = encounter?.diagnoses || [];\n  const prescriptions = encounter?.prescriptions || [];\n  const notes = encounter?.doctor_notes || '';\n\n  for (const f of features) {\n    const featureName = f.feature;\n    const direction = directionEncoding[f.direction.toString()] || 'unknown';\n    const vitalKey = featureToVitalMap[featureName];\n    let value = 'Unknown';\n\n    // Try to resolve the value from vitals or known fields\n    if (vitalKey && vitals[vitalKey] !== undefined) {\n      value = vitals[vitalKey];\n    } else if (featureName.startsWith('diagnosis_code_')) {\n      const icd = featureName.split('_')[2];\n      value = diagnosis.includes(icd) ? icd : 'Not Present';\n    } else if (featureName.startsWith('code_')) {\n      const code = featureName.split('_')[1];\n      value = prescriptions.includes(code) ? code : 'Not Prescribed';\n    } else if (featureName === 'text_control') {\n      value = notes || 'No note available';\n    } else if (featureName === 'encounter_type') {\n      value = encounter?.encounter_type || 'Unknown';\n    }\n\n    output.push({\n      encounter_date: date,\n      feature: featureName,\n      value,\n      direction\n    });\n  }\n}\n\n// Final output\nreturn {\n  json: {\n    age,\n    features_for_alignment: output,\n    risk_score: riskScore,\n    stratification\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        48
+      ],
+      "id": "65452f6e-a23b-4b63-aebd-6d71459e88e0",
+      "name": "processedData"
+    }
+  ],
+  "pinData": {
+    "Call Predict Model": [
+      {
+        "json": {
+          "patient_id": "12345",
+          "risk_score": 0.78,
+          "stratification": "high_risk",
+          "explanation_summary": {
+            "2024-01-15": [
+              {
+                "feature": "lab_systolic_bp",
+                "direction": 1
+              },
+              {
+                "feature": "diagnosis_code_I10",
+                "direction": 1
+              },
+              {
+                "feature": "lab_cholesterol",
+                "direction": 1
+              }
+            ],
+            "2024-03-10": [
+              {
+                "feature": "text_control",
+                "direction": -1
+              },
+              {
+                "feature": "code_diabetes",
+                "direction": 1
+              },
+              {
+                "feature": "code_metformin",
+                "direction": 1
+              }
+            ],
+            "2024-06-20": [
+              {
+                "feature": "lab_systolic_bp",
+                "direction": 1
+              },
+              {
+                "feature": "lab_diastolic_bp",
+                "direction": 1
+              },
+              {
+                "feature": "encounter_type",
+                "direction": -1
+              }
+            ]
+          },
+          "direction_encoding": {
+            "1": "increased risk",
+            "-1": "decreased risk"
+          }
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "patient_id": "12345",
+          "mrn": "MRN0098765",
+          "moh_id": 7043,
+          "regional_health_dept": "Riyadh Health Affairs",
+          "health_cluster": "Riyadh First Health Cluster",
+          "city": "Riyadh",
+          "gender": "Female",
+          "blood_group": "A+",
+          "date_of_birth": "1970-07-18",
+          "occupation": "Teacher",
+          "address_id": "ADDR01123",
+          "residency_status": "Saudi",
+          "nationality": "Saudi",
+          "religion": "Muslim",
+          "marital_status": "Widowed",
+          "encounters": [
+            {
+              "encounter_number": "ENC001000111",
+              "encounter_date": "2024-01-15",
+              "visit_datetime": "2024-01-15T09:30:00",
+              "facility_type": "PHC",
+              "facility_name": "Al-Malaz Clinic",
+              "facility_code": "RYD112",
+              "hospital_type": "Primary Health Care",
+              "visit_status": "Completed",
+              "primary_diagnosis_code": "I10",
+              "vital_signs": {
+                "systolic_bp_mmHg": 155,
+                "cholesterol_mg_dL": 240
+              },
+              "diagnoses": [
+                "I10"
+              ],
+              "lab_results": {
+                "cholesterol_total": 240
+              }
+            },
+            {
+              "encounter_number": "ENC001000112",
+              "encounter_date": "2024-03-10",
+              "visit_datetime": "2024-03-10T14:00:00",
+              "facility_type": "PHC",
+              "facility_name": "Al-Malaz Clinic",
+              "facility_code": "RYD112",
+              "hospital_type": "Primary Health Care",
+              "visit_status": "Completed",
+              "primary_diagnosis_code": "E11.9",
+              "diagnoses": [
+                "E11.9"
+              ],
+              "prescriptions": [
+                "Metformin"
+              ],
+              "doctor_notes": "Patient expressed improved lifestyle control and adherence."
+            },
+            {
+              "encounter_number": "ENC001000113",
+              "encounter_date": "2024-06-20",
+              "visit_datetime": "2024-06-20T08:10:00",
+              "facility_type": "PHC",
+              "facility_name": "Al-Malaz Clinic",
+              "facility_code": "RYD112",
+              "hospital_type": "Primary Health Care",
+              "visit_status": "Completed",
+              "primary_diagnosis_code": "I10",
+              "vital_signs": {
+                "systolic_bp_mmHg": 162,
+                "diastolic_bp_mmHg": 100
+              },
+              "encounter_type": "Follow-up",
+              "notes": "Blood pressure not well controlled, advised dietary changes."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "repo_name": "n8n-versioncontrol",
+  "repo_owner": "chamghannoum",
+  "repo_path": "github.com/chamghannoum/n8n-versioncontrol",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-25T06:15:42.532Z",
+      "updatedAt": "2025-08-25T06:15:42.532Z",
+      "role": "workflow:owner",
+      "workflowId": "4fU1ss08G7a5OjnT",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-26T05:10:08.000Z",
+  "versionId": "d14af2c1-c033-4db0-a740-c359514a7e96"
+}
