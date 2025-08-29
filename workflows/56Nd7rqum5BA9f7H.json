@@ -1,0 +1,172 @@
+{
+  "active": false,
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-11T10:06:16.338Z",
+  "id": "56Nd7rqum5BA9f7H",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "PetAdoptionEmail",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1PECwDwz4fieBEZsRFTdAy3XBTUImPjqV3BIw2f3ZCDU",
+          "mode": "list",
+          "cachedResultName": "Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PECwDwz4fieBEZsRFTdAy3XBTUImPjqV3BIw2f3ZCDU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PECwDwz4fieBEZsRFTdAy3XBTUImPjqV3BIw2f3ZCDU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -60
+      ],
+      "id": "a0e27a2e-991b-4436-b809-4cda08729230",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "BbghpXjXE05xS1Zh",
+          "name": "Layla Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        60,
+        160
+      ],
+      "id": "30ee4b94-3e67-41e8-bc7f-3d0a3aae842a",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "ZofkBZbxP58Lgg5q",
+          "name": "Intern's GROQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json['Adopted?'] }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Not adopted"
+            },
+            {
+              "category": "Adopted"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        60,
+        -60
+      ],
+      "id": "05e2f82c-d1a9-4fda-8556-71a78218cf90",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['Email of Adopter'] }}",
+        "subject": "Thank you!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        0
+      ],
+      "id": "9e593654-adc4-4493-83ed-ef0a8436d7f5",
+      "name": "Gmail",
+      "webhookId": "d02e0808-bdcd-4a1c-be59-6d563fe9079a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "uNKQqayIuMpVn9sr",
+          "name": "Layla's Gmail Account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-11T10:06:16.351Z",
+      "updatedAt": "2025-06-11T10:06:16.351Z",
+      "role": "workflow:owner",
+      "workflowId": "56Nd7rqum5BA9f7H",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-11T11:58:42.000Z",
+  "versionId": "a2bf6cc7-8680-45a4-a4a6-4cc74b515cf5"
+}
