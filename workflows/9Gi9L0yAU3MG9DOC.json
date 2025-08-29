@@ -1,0 +1,315 @@
+{
+  "active": false,
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "glycemic_thresholds",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "blood_pressure_thresholds",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "lipid_thresholds",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "kidney_function_thresholds",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "bmi_thresholds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "glycemic_thresholds": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "blood_pressure_thresholds": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "lipid_thresholds": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "kidney_function_thresholds": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "bmi_thresholds": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-26T11:00:49.065Z",
+  "id": "9Gi9L0yAU3MG9DOC",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Threshold Validation",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "data"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        -144
+      ],
+      "id": "0686ce40-dd0c-4b6c-805a-717080eb2544",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "diabetes_risk",
+          "mode": "list",
+          "cachedResultName": "diabetes_risk"
+        },
+        "table": {
+          "__rl": true,
+          "value": "glycemic_thresholds",
+          "mode": "list",
+          "cachedResultName": "glycemic_thresholds"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        288,
+        -544
+      ],
+      "id": "6f8150c3-e924-4dbd-94a3-2fb34d7186cf",
+      "name": "glycemic_thresholds",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "diabetes_risk",
+          "mode": "list",
+          "cachedResultName": "diabetes_risk"
+        },
+        "table": {
+          "__rl": true,
+          "value": "blood_pressure_thresholds",
+          "mode": "list",
+          "cachedResultName": "blood_pressure_thresholds"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        288,
+        -336
+      ],
+      "id": "5635f37f-5dd9-455a-9946-6e55be9baa1d",
+      "name": "blood_pressure_thresholds",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "diabetes_risk",
+          "mode": "list",
+          "cachedResultName": "diabetes_risk"
+        },
+        "table": {
+          "__rl": true,
+          "value": "lipid_thresholds",
+          "mode": "list",
+          "cachedResultName": "lipid_thresholds"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        288,
+        -144
+      ],
+      "id": "78d16deb-9b39-4afd-af2e-49bb42f4381e",
+      "name": "lipid_thresholds",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "diabetes_risk",
+          "mode": "list",
+          "cachedResultName": "diabetes_risk"
+        },
+        "table": {
+          "__rl": true,
+          "value": "kidney_function_thresholds",
+          "mode": "list",
+          "cachedResultName": "kidney_function_thresholds"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        288,
+        48
+      ],
+      "id": "d32215de-c02c-479d-8ab6-5a4d2755ca43",
+      "name": "kidney_function_thresholds",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "diabetes_risk",
+          "mode": "list",
+          "cachedResultName": "diabetes_risk"
+        },
+        "table": {
+          "__rl": true,
+          "value": "glycemic_thresholds",
+          "mode": "list",
+          "cachedResultName": "glycemic_thresholds"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        288,
+        256
+      ],
+      "id": "8c43a520-487f-4474-b6b9-7caa21123a1a",
+      "name": "bmi_thresholds",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        656,
+        -192
+      ],
+      "id": "6ad869d1-486b-4f81-be4f-6088f6cb74fe",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-26T11:00:49.076Z",
+      "updatedAt": "2025-08-26T11:00:49.076Z",
+      "role": "workflow:owner",
+      "workflowId": "9Gi9L0yAU3MG9DOC",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-27T08:15:53.000Z",
+  "versionId": "d0fd8485-8afa-4b3a-8cdc-1d49cd41bfdc"
+}
