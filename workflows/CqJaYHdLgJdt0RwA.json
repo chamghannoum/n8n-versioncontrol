@@ -1,0 +1,226 @@
+{
+  "active": true,
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getLabNames": {
+      "main": [
+        [
+          {
+            "node": "extractText",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extractFromPDF": {
+      "main": [
+        [
+          {
+            "node": "getLabNames",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extractText": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "extractFromPDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-06T09:35:23.126Z",
+  "id": "CqJaYHdLgJdt0RwA",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Lab Uploads & Result Explanation (v1)",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cgsiqlwamtdlabhkbcdi.supabase.co/functions/v1/lab-interpret",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "testCode",
+              "value": "={{ $json.testCode }}"
+            },
+            {
+              "name": "value",
+              "value": "={{ $json.value }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        96
+      ],
+      "id": "b78f805f-8a64-460f-822a-79b69316f524",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select test_code, name\nfrom lab_tests;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        384,
+        0
+      ],
+      "id": "a96c4953-670c-4317-9ab2-cd2e10439468",
+      "name": "getLabNames",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        192,
+        0
+      ],
+      "id": "2a96a096-6d14-40a3-8211-5556f748544b",
+      "name": "extractFromPDF"
+    },
+    {
+      "parameters": {
+        "jsCode": "const labTests = $items(\"getLabNames\").map(item => item.json);\nconst text = $items(\"extractFromPDF\")[0].json.text;\n\nconst lines = text.split(/\\n+/).map(l => l.trim());\nconst results = [];\n\nfunction normalize(str) {\n  return str.toLowerCase().replace(/[^\\w\\s]/g, \"\").trim();\n}\n\nfor (const test of labTests) {\n  const testNameNorm = normalize(test.name);\n\n  for (let i = 0; i < lines.length; i++) {\n    const currentLineNorm = normalize(lines[i]);\n\n    if (currentLineNorm.includes(testNameNorm)) {\n      for (let j = 1; j <= 3; j++) {\n        const candidate = lines[i + j];\n        const value = parseFloat(candidate);\n\n        if (!isNaN(value)) {\n          results.push({\n            testCode: test.test_code,\n            name: test.name,\n            value\n          });\n          break; \n        }\n      }\n      break; \n    }\n  }\n}\n\nreturn results.map(r => ({ json: r }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        0
+      ],
+      "id": "522b4d71-337d-41a8-b012-6c465dd620cf",
+      "name": "extractText"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        800,
+        0
+      ],
+      "id": "5d0a033c-91bb-46ca-af7d-404612422494",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "labfile",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4db13f87-b4a3-4588-85e0-85a5940eda08",
+      "name": "Webhook",
+      "webhookId": "cd05ab51-efd4-49c0-bacc-9034ea821b33"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1040,
+        -128
+      ],
+      "id": "90936198-cf18-4061-adc4-79da1177ebf6",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-06T09:35:23.138Z",
+      "updatedAt": "2025-08-06T09:35:23.138Z",
+      "role": "workflow:owner",
+      "workflowId": "CqJaYHdLgJdt0RwA",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-08-12T06:40:13.000Z",
+  "versionId": "56e46cbc-fabd-4661-a835-6f3ff4cba1eb"
+}
