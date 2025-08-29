@@ -1,0 +1,348 @@
+{
+  "active": true,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "extractSessionId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query in Postgres": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get tables, schemas, foreign keys": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extractSessionId": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-07T05:21:52.260Z",
+  "id": "H6ek0UuQ9FhCgJgV",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "NLQ",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {
+          "allowedOrigins": "http://localhost:3000/",
+          "loadPreviousSession": "manually"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "0ec00262-8e45-4198-8b31-e08a63216a64",
+      "name": "When chat message received",
+      "webhookId": "dd978e06-1621-4915-a228-9ff4502d3978"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.question }} || {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are an enterprise assistant helping users access information. \n\nYou are tasked with answering a question using the information within the database. \n\nReply to the user in Arabic if the User asked in Arabic. Reply in English if user asked in English. Do not mix languages. Check the language used here: {{ $json.chatInput }}\n\nBefore querying the database, you must call the \"Get tables, schemas, columns, and foreign keys\" tool to identify the most relevant tables and fields. \n\nThe tool above will include any foreign key references. You can use these to construct JSON statements as necessary to reduce the number of SQL commands, you must make sure to follow correct foreign key relationships to retrieve accurate result. \n\nWhen applying WHERE clauses, you should run SELECT DISTINCT queries (LIMIT 100) on the relevant fields first to understand the valid options. This applies even if the user provides a specific value-you must verify that the value exists in the data before using it. \n\nDo NOT run SELECT DISTINCT queries for ID columns. \n\nYour goal is to provide an accurate answer based on this information ONLY. Your aim is to construct a single SQL query to join all of the relevant tables for the required data, unless you require SQL queries to get distinct values. \n\nIf you cannot answer the question using the provided information, or if no information is returned from the vector store, say: \n\"Sorry, I don't know.\"\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "efae3f9d-7fe6-4bd9-abcf-282054c3fd50",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        272
+      ],
+      "id": "89de77a7-994b-4e0c-aa93-11dc439bec15",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $fromAI('sql_query') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        704,
+        256
+      ],
+      "id": "86edd105-2d35-4787-9bb3-d5f2078926c9",
+      "name": "Execute a SQL query in Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to get available tables and fields",
+        "workflowId": {
+          "__rl": true,
+          "value": "H6ek0UuQ9FhCgJgV",
+          "mode": "list",
+          "cachedResultName": "NLQ"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        256
+      ],
+      "id": "485ea6dc-b18e-406b-8400-3291d3cc3712",
+      "name": "Get tables, schemas, foreign keys"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c6a9d761-7979-49d6-8048-bc7342e7a426",
+              "name": "mappings",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        464
+      ],
+      "id": "30b4708a-dbd7-488b-b5d4-1d712a8a17c6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        464,
+        464
+      ],
+      "id": "4c06474e-8183-45ff-a434-bdeb3e3b6dcf",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "get_list_of_tables_and_columns",
+          "mode": "list",
+          "cachedResultName": "get_list_of_tables_and_columns"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        256,
+        464
+      ],
+      "id": "3c03cd3f-8777-4cde-a80a-44bbfccecd42",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        464
+      ],
+      "id": "6d05234f-0ad7-4e94-82cf-138b69836530",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {
+          "maxTokensToSample": 4096
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        176,
+        272
+      ],
+      "id": "efd52f37-b335-48a6-b25e-bd794e01dc3a",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "ZofkBZbxP58Lgg5q",
+          "name": "Intern's GROQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function uuidv4() {\n  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {\n    const r = Math.random() * 16 | 0;\n    const v = c === 'x' ? r : (r & 0x3 | 0x8);\n    return v.toString(16);\n  });\n}\n\nfunction getCookie(name, cookieHeader) {\n  if (!cookieHeader) return null;\n  const m = cookieHeader.match(new RegExp('(?:^|; )' + name + '=([^;]+)'));\n  return m ? decodeURIComponent(m[1]) : null;\n}\n\nconst cookieHeader = $json.headers?.cookie || $json.headers?.Cookie;\n\nconst fromCookie = getCookie('n8n-chat-session', cookieHeader);\n\nconst fromQuery = $json.query?.sid;\nconst fromBody  = $json.sessionId;\n\nconst sessionId = fromBody || fromQuery || fromCookie || uuidv4();\n\nreturn [{ json: { ...$json, sessionId } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        0
+      ],
+      "id": "c1f62aee-57ef-423e-94f2-8b2f4531a8b5",
+      "name": "extractSessionId"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-07T05:21:52.272Z",
+      "updatedAt": "2025-08-07T05:21:52.272Z",
+      "role": "workflow:owner",
+      "workflowId": "H6ek0UuQ9FhCgJgV",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-08-13T06:12:31.000Z",
+  "versionId": "90d92e2c-bef2-4c54-928b-ca08c3859c45"
+}
