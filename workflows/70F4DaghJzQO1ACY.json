@@ -1,0 +1,646 @@
+{
+  "active": true,
+  "connections": {
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "OutputParser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "PatientInformation1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PatientInformation1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GuidelinesGeneration": {
+      "main": [
+        [
+          {
+            "node": "MessageLoop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MessageLoop": {
+      "main": [
+        [],
+        [
+          {
+            "node": "PromptGeneration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PromptGeneration": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OutputParser": {
+      "main": [
+        [
+          {
+            "node": "FinalGeneration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FinalGeneration": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "MessageCollection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MessageCollection": {
+      "main": [
+        [
+          {
+            "node": "GuidelinesGeneration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "MessageLoop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-24T10:19:42.189Z",
+  "id": "70F4DaghJzQO1ACY",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Personalizing Guided Care Messages - Test Environment",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Patient's name: {{ $('GuidelinesGeneration').item.json.patient_profile.name }}\nPatient's age: {{ $('GuidelinesGeneration').item.json.patient_profile.age }}\nPatient's gender: {{ $('GuidelinesGeneration').item.json.patient_profile.gender }}\nPatient's pregnancy status: {{ $('GuidelinesGeneration').item.json.patient_profile.pregnancy }}\nPatient's conditions: {{ $('GuidelinesGeneration').item.json.patient_profile.conditions }}\n\nEnglish Message title: {{ $('MessageCollection').item.json.messageObject.title }}\nEnglish Message content: {{ $('MessageCollection').item.json.messageObject.content }}\nArabic Message title: {{ $('MessageCollection').item.json.messageObject.title_ar }}\nArabic Message content: {{ $('MessageCollection').item.json.messageObject.content_ar }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=If you include anything outside the JSON block (like assumptions, explanations, formatting, headings, or markdown), your response will be considered invalid and rejected by the system.\n\nYour entire output must be a valid JSON object — and **nothing else**.\n\n{{ $json.prompt }}\n\n"
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=Patient's name: {{ $('PatientInformation1').item.json.name }} \nPatient's age: {{ $('PatientInformation1').item.json.age }} \nPatient's gender: {{ $('PatientInformation1').item.json.gender }} \nPatient's conditions: {{ \n$('PatientInformation1').item.json.conditions }} \nPatient's diet: {{ $('GuidelinesGeneration').item.json.patient_profile.preferences.diet }} \nPatient's preferred activity: {{ $('GuidelinesGeneration').item.json.patient_profile.preferences.activity }} \nPatient's pregnancy status: {{ $('PatientInformation1').item.json.pregnancy }}\n\nEnglish Message title: {{ $('MessageCollection').item.json.messageObject.title }}\nEnglish Message content: {{ $('MessageCollection').item.json.messageObject.content }}\nArabic Message title: {{ $('MessageCollection').item.json.messageObject.title_ar }}\nArabic Message content: {{ $('MessageCollection').item.json.messageObject.content_ar }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -4928,
+        4352
+      ],
+      "id": "fddda0d7-f3b0-449e-b033-23f807eae320",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -4848,
+        4560
+      ],
+      "id": "9d0883ed-7405-438e-be5b-42979a2a5230",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "ZofkBZbxP58Lgg5q",
+          "name": "Intern's GROQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b2ec6c67-2168-42ef-9a20-f0d0dc8d7e87",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -7776,
+        4480
+      ],
+      "id": "b9da48b9-53c9-4371-a38f-8885df92d9ca",
+      "name": "Webhook",
+      "webhookId": "b2ec6c67-2168-42ef-9a20-f0d0dc8d7e87"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.test.iohealth.com/gateway/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"query GuidedCareJourneyItems($filter: GuidedCareJourneyItemFilter) {\\r\\n  guidedCareJourneyItems(filter: $filter) {\\r\\n    edges {\\r\\n      node {\\r\\n        medicalMessage {\\r\\n            id\\r\\n            code\\r\\n          messages {\\r\\n            article {\\r\\n                id\\r\\n                \\r\\n              category {\\r\\n                code\\r\\n                display\\r\\n                displayAr\\r\\n              }\\r\\n              content\\r\\n              description\\r\\n              descriptionAr\\r\\n              contentAr\\r\\n              contentImages {\\r\\n                id\\r\\n                alias\\r\\n                url\\r\\n              }\\r\\n            }\\r\\n            bodyArabic\\r\\n            bodyEnglish\\r\\n            buttonTextArabic\\r\\n            buttonTextEnglish\\r\\n            contentURLArabic\\r\\n            contentURLEnglish\\r\\n            headerImage\\r\\n            presentedTitleArabic\\r\\n            presentedTitleEnglish\\r\\n            \\r\\n          }\\r\\n        }\\r\\n      }\\r\\n    }\\r\\n  }\\r\\n}\",\n  \"variables\": {\n    \"filter\": {\n      \"guidedCareJourneyId\": 924,\n      \"types\": [\n        \"MEDICAL_MESSAGE_GENERAL\",\n        \"MEDICAL_MESSAGE_MEDICAL\",\n        \"MEDICAL_MESSAGE_MONITORING\"\n      ]\n    }\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7120,
+        4480
+      ],
+      "id": "ef4d14e9-5aa9-455b-9749-2836a90ae227",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4876fdd2-4b34-441a-9d44-2fd78e3502e6",
+              "name": "name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "d65941b5-334f-430f-b51a-66050df6ea4d",
+              "name": "age",
+              "value": "={{ $json.body.age }}",
+              "type": "number"
+            },
+            {
+              "id": "38eb29bf-feed-4a34-9984-e9b96e1ecc08",
+              "name": "gender",
+              "value": "={{ $json.body.gender.toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "3c0e8de6-7c30-463f-9232-8655a40fd5b0",
+              "name": "journey",
+              "value": "={{ $json.body.journey }}",
+              "type": "string"
+            },
+            {
+              "id": "f266f73a-ec8d-48e8-8420-ca929d85cdef",
+              "name": "pregnancy",
+              "value": "[null]",
+              "type": "string"
+            },
+            {
+              "id": "12ee973c-9fe5-4a35-9f3b-80630140fefa",
+              "name": "conditions",
+              "value": "={{ $json.body.conditions }}",
+              "type": "array"
+            },
+            {
+              "id": "810b482a-c2bf-4118-b92f-38d4dcd28b24",
+              "name": "preferences",
+              "value": "={{ $json.body.preference }}\n",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -7568,
+        4480
+      ],
+      "id": "c88edf41-ebdb-4af5-8e32-8eaa82519e46",
+      "name": "PatientInformation1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Guidelines mapped by age group (0 = 18–39, 1 = 40–64, 2 = 65+)\nconst groupGuidelines = {\n  0: \"Use an optimistic, energizing tone that speaks to autonomy, growth, and identity. Acknowledge stress but keep messages empowering, forward-looking, and emotionally intelligent.\",\n  1: \"Maintain a steady, respectful tone that affirms dignity and balance amid life’s responsibilities. Encourage consistency and self-trust without sounding like advice.\",\n  2: \"Use a warm, dignified tone that honors wisdom and resilience. Reassure gently while affirming continued strength, self-care, and value.\"\n};\n\n// Gender-based guidance\nconst femaleGuidanceText = `Acknowledge hormonal changes and promote self-awareness without pathologizing. Affirm balance, emotional resilience, and intellect while avoiding patronizing language.`;\nconst maleGuidanceText = `Encourage proactive care and early attention to heart health and symptoms. Reinforce strength in consistency and vulnerability with a factual but compassionate tone.`;\n\n// Special instructions for pregnant patients\nconst pregnancyGuidanceText = `This patient is pregnant. DO NOT ALLOW INTENSE PHYSICAL ACTIVITY OR KETO DIET...`;\n\n// Activity-specific guidance for tailoring tone and vocabulary\nconst activityGuidanceMap = {\n  \"body weight exercises\": \"Use supportive language that values flexibility and strength without needing equipment. Great for patients with limited access or time.\",\n  \"cardio exercises\": \"Encourage consistency and energy. Highlight heart health and stamina improvements. Use words like 'boost', 'energize', or 'refresh'.\",\n  \"dancing\": \"Messages can be playful or joyful. Emphasize fun, rhythm, and expression. Words like 'move freely' or 'feel the beat' work well.\",\n  \"pilates\": \"Use calm, mindful phrasing. Reference control, core strength, or breath. Reinforce the value of steady effort.\",\n  \"resistance band exercises\": \"Highlight small but powerful movements. Reinforce that strength doesn’t require heavy equipment.\",\n  \"stretching routines\": \"Emphasize release, flexibility, and flow. Words like 'ease', 'open', and 'gentle' can be used.\",\n  \"swimming\": \"Mention fluid motion, low impact, or full-body benefits. Messages should feel refreshing and encouraging.\",\n  \"walking\": \"Focus on ease and accessibility. Mention pacing, fresh air, or clearing the mind. Great for all fitness levels.\",\n  \"wateraerobics\": \"Encourage low-impact movement and fun. Highlight joint support and buoyancy benefits.\",\n  \"weightlifting\": \"Reinforce discipline, progress, and muscle strength. Use confident, affirming language like 'build power' or 'stay strong'.\",\n  \"yoga\": \"Incorporate calm and awareness. Mention breath, balance, and mind-body connection. Use soothing tone.\",\n  \"light pregnancy friendly\": \"Since the patient is pregnant, encourage gentle, low-impact movement. Highlight the importance of comfort, breathing, and body awareness. Activities like walking, prenatal yoga, or stretching should feel soothing and supportive, not demanding.\",\n  \" \": \".\" //special case for pregnant women\n};\n\n// Diet-specific guidance for messaging\nconst dietGuidanceMap = {\n  \"balanced\": \"Encourage variety and portion awareness. Support steady habits without emphasizing restriction. Celebrate a sustainable approach.\",\n  \"high protein\": \"Reinforce consistency in protein intake. Encourage tracking to support energy, strength, and fullness. Avoid messaging that emphasizes carbs or fats.\",\n  \"keto\": \"Highlight fat-fueled energy and strict carb limits. Encourage awareness of net carbs and tracking for ketosis support.\",\n  \"low carb\": \"Affirm carb-conscious choices and disciplined eating. Avoid referencing carb-rich foods. Encourage consistency.\",\n  \"low fat\": \"Support lighter meal choices and portion awareness. Reinforce moderation without moralizing food choices.\",\n  \"meal replacement\": \"Encourage routine and simplicity in tracking intake. Acknowledge effort in following a structured plan. Avoid suggesting full meal prep.\",\n  \"very low calorie\": \"Use a gentle, supportive tone. Emphasize nourishment, consistency, and energy preservation. Avoid messages that add pressure or guilt.\"\n};\n\n// Output array to hold personalized results\nconst output = [];\n\n// Get all input items (messages)\nconst inputMessages = $input.all();\n\n// Patient profile data from a referenced node\nconst patient = $('PatientInformation1').first()?.json || {};\n\n// Extract and normalize patient attributes\nconst name = patient.name;\nconst age = patient.age;\nconst gender = patient.gender;\nconst conditions = patient.conditions || [];\nconst journey = patient.journey || null;\nconst preferencesRaw = patient.preferences?.preferences || patient.preferences || {};\nconst pregnancyRaw = patient.pregnancy;\n\n// Normalize pregnancy to a boolean flag and a raw value\nconst isPregnant = pregnancyRaw === \"true\";\nconst pregnancy = pregnancyRaw ?? null;\n\n// Classify patient into age groups (0, 1, 2)\nlet ageGroup = null;\nif (age >= 18 && age <= 39) ageGroup = 0;\nelse if (age >= 40 && age <= 64) ageGroup = 1;\nelse if (age >= 65) ageGroup = 2;\n\n// Get corresponding guideline for age, gender, and pregnancy\nconst ageGuideline = groupGuidelines[ageGroup] || \"Age guidelines not available.\";\nconst genderGuideline = gender === \"female\" ? femaleGuidanceText : gender === \"male\" ? maleGuidanceText : \"\";\nconst pregnancyGuideline = isPregnant ? pregnancyGuidanceText : \"\";\n\n// Extract and normalize diet and activity preferences\nlet diet = preferencesRaw.diet;\nlet activity = preferencesRaw.activity;\n\nconst dietNormalized = (diet && typeof diet === \"string\") ? diet.toLowerCase() : \"balanced\";\nconst activityNormalized = (activity && typeof activity === \"string\") ? activity.toLowerCase() : \"\";\n\n// If pregnant and following a restricted diet, override to \"balanced\"\nconst restrictedDiets = [\"keto\", \"very low calorie\", \"low fat\", \"low carb\"];\nconst finalDiet = isPregnant && restrictedDiets.includes(dietNormalized) ? \"balanced\" : dietNormalized;\n\n// If pregnant, use a special activity guideline\nconst finalActivity = isPregnant ? \"light pregnancy friendly\" : activityNormalized;\n\n// Fetch the appropriate activity and diet guidance text\nconst activityGuideline = finalActivity === \"\" ? \"\" : (activityGuidanceMap[finalActivity] || \"\");\nconst dietGuideline = dietGuidanceMap[finalDiet] || dietGuidanceMap[\"balanced\"];\n\n// Iterate through all messages and build personalized output objects\nfor (const inputItem of inputMessages) {\n  const message = inputItem.json.messageObject;\n\n  output.push({\n    patient_profile: {\n      name,\n      age,\n      gender,\n      conditions,\n      journey,\n      preferences: {\n        diet: diet || null,\n        activity: activity || null\n      },\n      pregnancy,\n      age_group: ageGroup\n    },\n    message: {\n      title: message.title,\n      title_ar: message.title_ar,\n      base_message_content: message.content,\n      base_message_content_ar: message.content_ar,\n      message_code: message.message_code,\n      button_text: \"\",\n      button_text_ar: \"\",\n      article_id: \"\" // Placeholder for integration later\n    },\n    guidelines: {\n      age_group_guidelines: ageGuideline,\n      gender_guidelines: genderGuideline,\n      ...(isPregnant ? { pregnancy_guidelines: pregnancyGuideline } : {}), // Include pregnancy guideline only if applicable\n      activity_guidelines: activityGuideline,\n      diet_guidelines: dietGuideline\n    }\n  });\n}\n\n// Return the final array of personalized message data\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6016,
+        4464
+      ],
+      "id": "7a77548b-6531-4647-bb0a-cef22e181f01",
+      "name": "GuidelinesGeneration"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -5584,
+        4480
+      ],
+      "id": "b6e91f3c-34a5-4732-b41f-c254a0a4e194",
+      "name": "MessageLoop"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "function getMessageType(code) {\n  if (typeof code !== 'string') return 'Unknown';\n  const parts = code.split('-');\n  const third = parts[2]?.trim().toUpperCase();\n  if (third === 'MD') return 'Medical';\n  if (third === 'MR') return 'Monitoring';\n  if (third === 'GE') return 'General';\n  return 'General';\n}\n\n// Shared inputs\nconst patient = $('PatientInformation1').first().json;\nconst ageGuidelines = $('GuidelinesGeneration').first().json.guidelines.age_group_guidelines;\nconst genderGuidelines = $('GuidelinesGeneration').first().json.guidelines.gender_guidelines;\nconst pregnancyGuidelines = $('GuidelinesGeneration').first().json.guidelines.pregnancy_guidelines;\nconst activityGuidelines = $('GuidelinesGeneration').first().json.guidelines.activity_guidelines;\nconst dietGuidelines = $('GuidelinesGeneration').first().json.guidelines.diet_guidelines;\nconst conditions = patient.conditions || [];\n\n// Current input item (one message)\nconst msg = $input.item.json;\nconst messageTitle = msg.title?.trim() || \"\";\nconst messageTitleArabic = msg.title_ar?.trim() || \"\";\nconst messageContent = msg.content?.trim() || \"\";\nconst messageContentArabic = msg.content_ar?.trim() || \"\";\nconst messageCode = $json.message.message_code || \"\";\nconst articleID = $json.message.article_id;\nconst messageID = $json.message.message_id;\nconst messageType = getMessageType(messageCode);\n  \n\nlet prompt = \"\";\n\nif (messageType === \"Medical\") {\n  prompt = `You are a medical assistant who rewrites short, medical messages to personalize them and help patients understand ${messageTitle}. Each personalized output message  must be less than 150 English characters, emotionally intelligent, supportive, and warm. Every message should encourage the patient to learn or explore more.\n\n—\n\nYour task is to rewrite human, educational messages that feel natural and relevant. Personalize messages only when it adds value or supports the original message. Use patient information sparingly and only when it enhances clarity, tone, or encouragement. You are refer to ${conditions}, but do so sparingly and only mention one at a time. Mention them in only up to 25% of the messages.\n\nYou may refer to:\n- Name  \n- Age  \n- Gender  \n- Health conditions (only if gently relevant)  \n- Diet and activity preferences — only if clearly related to the base message  \n- Pregnancy — only when appropriate to tone and context\n\n—\n\nBase Message:\n\n- English title: ${messageTitle}  \n- English content: ${messageContent}  \n- Arabic title: ${messageTitleArabic}  \n- Arabic content: ${messageContentArabic}\n\n—\n\nPatient profile includes:  \n- Name, Age, Gender  \n- Health conditions  \n- Preferences: diet, activity  \n- Pregnancy status  \n- Age group\n\n—\n\nOutput Format:  \nReturn a valid JSON object using only these six fields:\n\n{\n  \"bodyEnglish\": \"...\",\n  \"bodyArabic\": \"...\",\n  \"buttonTextEnglish\": \"...\",\n  \"buttonTextArabic\": \"...\",\n  \"presentedTitleEnglish\": \"...\",\n  \"presentedTitleArabic\": \"...\"\n}\n\n—\n\nOutput Rules:\n\n- The full message must stay under 150 English characters (and equivalent in Arabic).\n- \"buttonTextEnglish\" must alternate naturally between: “Learn More!” and “Read More!”\n- \"buttonTextArabic\":\n  - If gender = female → \"إكتشفي المزيد!\"  \n  - If gender = male → \"إكتشف المزيد!\"\n- \"presentedTitleEnglish\" = ${messageTitle}  \n- \"presentedTitleArabic\" = ${messageTitleArabic}\n\n—\n\nStyle Guidelines:\n- Use warm, gentle, human language — never robotic or clinical.  \n- Vary punctuation and sentence structure to avoid repetition.  \n- Mention conditions, diet, or activity only if they feel relevant and natural to the message topic.  \n- Avoid forcing details into the message — write like a thoughtful human, not a checklist.  \n- Arabic must reflect the same tone and meaning as English, not a word-for-word translation.  \n- Personalization should enhance the message — not distract from it.\n\n_\nCustomization Layers  \n- Age group rules → ${ageGuidelines}  \n- Gender rules → ${genderGuidelines}  \n- Diet-based guidance → ${dietGuidelines}  \n- Activity-based guidance → ${activityGuidelines}  \n- ${pregnancyGuidelines}\n\n—\n\nDo Not:\n\n- Add medical advice not present in the original base message.  \n- Exceed the character limit.  \n- Mention diet, activity, or conditions unless they clearly relate to the base message topic.\n—\n\nExamples\n\nExample 1:  \nInput:  \n{  \n  \"name\": \"Hassan\",  \n  \"age\": 78,  \n  \"gender\": \"male\",  \n  \"conditions\": [\"Type 2 diabetes, Hypertension\"],  \n  \"preferences\": { \"diet\": \"balanced\", \"activity\": \"yoga\" },  \n  \"pregnancy\": false,  \n  \"age_group\": 2,  \n  \"message\": {  \n    \"title\": \"Physical Activity for Diabetes\",  \n    \"content\": \"Regular physical activity can improve your blood sugar control, boost your mood, and improve your overall health.\",  \n    \"title_ar\": \"النشاط هو مفتاح إدارة السكري\",  \n    \"content_ar\": \"النشاط البدني المنتظم يمكن أن يحسن التحكم في نسبة السكر في الدم، يعزز مزاجك، ويحسن صحتك العامة.\"  \n  }  \n}\n\nOutput:  \n{\n  \"bodyEnglish\": \"Even gentle activity like yoga can lift your mood and help manage diabetes. Take a step toward feeling better, Hassan.\",\n  \"bodyArabic\": \"حتى التمارين الخفيفة مثل اليوغا يمكن أن تحسن مزاجك وتساعد في إدارة السكري. ابدأ بخطوة نحو الشعور الأفضل، يا حسن.\",\n  \"buttonTextEnglish\": \"Learn More!\",\n  \"buttonTextArabic\": \"إكتشف المزيد!\",\n  \"presentedTitleEnglish\": \"Physical Activity for Diabetes\",\n  \"presentedTitleArabic\": \"النشاط هو مفتاح إدارة السكري\"\n}\n\nExample 2:  \nInput:  \n{  \n  \"name\": \"Layla\",  \n  \"age\": 26,  \n  \"gender\": \"female\",  \n  \"conditions\": [Type 2 diabetes],  \n  \"preferences\": { \"diet\": \"low carb\", \"activity\": \"swimming\" },  \n  \"pregnancy\": true,  \n  \"age_group\": 0,  \n  \"message\": {  \n    \"title\": \"Exercise Controls Blood Sugar\",  \n    \"content\": \"Exercise helps your body use insulin more effectively. Learn how being active can lower your blood sugar and improve your diabetes management.\",  \n    \"title_ar\": \"دورالتمرين في التحكم بالسكر\",  \n    \"content_ar\": \"التمرين يساعد جسمك على استخدام الأنسولين بشكل أكثر فعالية. تعلم كيف يمكن أن يقلل النشاط البدني من نسبة السكر في الدم ويحسن إدارة السكري.\"  \n  }  \n}\n\nOutput:  \n{\n  \"bodyEnglish\": \"Staying active, even through swimming, can help your body use insulin more effectively. Learn how a small routine can go a long way, Layla.\",\n  \"bodyArabic\": \"الحفاظ على النشاط، حتى من خلال السباحة، يمكن أن يساعد في توازن السكر. روتين بسيط قد يحدث فرقاً كبيراً، يا ليلى.\",\n  \"buttonTextEnglish\": \"Read More!\",\n  \"buttonTextArabic\": \"إكتشفي المزيد!\",\n  \"presentedTitleEnglish\": \"Exercise Controls Blood Sugar\",\n  \"presentedTitleArabic\": \"دورالتمرين في التحكم بالسكر\"\n}\n\nExample 3:  \nInput:  \n{  \n  \"name\": \"Rania\",  \n  \"age\": 49,  \n  \"gender\": \"female\",  \n  \"conditions\": [PCOS, Anxiety],  \n  \"preferences\": { \"diet\": \"meal replacement\", \"activity\": \"pilates\" },  \n  \"pregnancy\": false,  \n  \"age_group\": 1,  \n  \"message\": {  \n    \"title\": \"Exercise and Mental Health\",  \n    \"content\": \"Physical activity doesn’t just help your body; it benefits your mind too. Learn how exercise can improve your mental health and well-being.\",  \n    \"title_ar\": \"التمارين والصحة العقلية\",  \n    \"content_ar\": \"النشاط البدني لا يفيد جسمك فقط؛ إنه يفيد عقلك أيضًا. تعلم كيف يمكن أن يحسن التمرين صحتك العقلية ورفاهيتك.\"  \n  }  \n}\n\nOutput:  \n{  \n  \"bodyEnglish\": \"Physical activity doesn’t just help your body; it benefits your mind too. Pilates can restore calm and balance when facing anxiety, Rania — even in small steps.\",  \n  \"bodyArabic\": \"النشاط البدني لا يفيد جسمك فقط؛ إنه يفيد عقلك أيضًا. يمكن أن يعيد البيلاتس التوازن والهدوء، يا رانيا — حتى بخطوات صغيرة.\",  \n  \"buttonTextEnglish\": \"Learn More!\",  \n  \"buttonTextArabic\": \"إكتشفي المزيد!\",  \n  \"presentedTitleEnglish\": \"Exercise and Mental Health\",  \n  \"presentedTitleArabic\": \"التمارين والصحة العقلية\"  \n}`; \n} else if (messageType === \"Monitoring\") {\n  prompt = `You are a medical assistant who creates short (each personalized message output should be no more than 150 English characters) personalized medical reminders that prompt patients to log their medical levels.\n\n- English Message title: ${messageTitle}  \n- English Message content: ${messageContent}  \n- Arabic Message title: ${messageTitleArabic}  \n- Arabic Message content: ${messageContentArabic}\n\nYou must personalize the content only, using the following rules.\n\n---\n\nFormat & Structure  \n- Return output as valid JSON with these four fields only:  \n  - \"bodyEnglish\"  \n  - \"bodyArabic\"  \n  - \"presentedTitleEnglish\"  \n  - \"presentedTitleArabic\"  \n\n- Each message (English and Arabic) must contain no more than 2 short sentences  \n- An encouraging, supportive tone is required  \n- Always include a clear prompt to input or log  \n\n---\n\nVariety & Natural Flow Rules  \nYou must vary all of the following in every message:  \n1. Sentence starters  \n2. Sentence structure  \n3. Punctuation  \n4. Name usage (50%, varied position)  \n5. Condition references (indirect only, if helpful)\n\n---\n\nDo Not  \n- Do not repeat openings  \n- Do not mention irrelevant conditions  \n- Do not always begin with the name  \n- Do not exceed the length\n\n---\n\nCustomization Layers  \n- Age group rules → ${ageGuidelines}  \n- Gender rules → ${genderGuidelines}  \n- Diet-based guidance → ${dietGuidelines}  \n- Activity-based guidance → ${activityGuidelines}  \n- ${pregnancyGuidelines}\n\n---\n\nExamples\n\nExample 1:  \nInput:  \n{  \n  \"name\": \"Ahmed\",  \n  \"age\": 49,  \n  \"gender\": \"male\",  \n  \"conditions\": [\"Anxiety\", \"Type 2 Diabetes\"],  \n  \"journey\": \"diabetes\",  \n  \"preferences\": { \"diet\": \"keto\", \"activity\": \"swimming\" },  \n  \"pregnancy\": false,  \n  \"age_group\": 1,  \n  \"message\": {  \n    \"title\": \"Stay in Control\",  \n    \"content\": \"Time to check your sugar levels. Monitoring helps you stay in control. Log your value now!\",  \n    \"title_ar\": \"حافظ على السيطرة\",  \n    \"content_ar\": \"حان وقت فحص مستوى السكر. المتابعة تساعدك على الحفاظ على السيطرة. سجّل قيمتك الآن!\"  \n  }  \n}  \nOutput:  \n{  \n  \"bodyEnglish\": \"Time to check your sugar levels. When things feel tense, staying steady can help. Log your value, Ahmed.\",  \n  \"bodyArabic\": \"حان وقت فحص مستوى السكر. عندما تشعر بالتوتر، فإن الاستقرار يساعدك. سجّل قيمتك، يا أحمد.\",  \n  \"presentedTitleEnglish\": \"Stay in Control\",  \n  \"presentedTitleArabic\": \"حافظ على السيطرة\"  \n}\n\nExample 2:  \nInput:  \n{  \n  \"name\": \"Taylor\",  \n  \"age\": 28,  \n  \"gender\": \"female\",  \n  \"conditions\": [\"high blood pressure\", \"Type 2 Diabetes\"],  \n  \"journey\": \"diabetes\",  \n  \"preferences\": { \"diet\": \"low-carb\", \"activity\": \"walking\" },  \n  \"pregnancy\": true,  \n  \"age_group\": 0,  \n  \"message\": {  \n    \"title\": \"Time to Check\",  \n    \"content\": \"Time to check your blood sugar levels. Please log your value.\",  \n    \"title_ar\": \"حان وقت الفحص\",  \n    \"content_ar\": \"حان وقت فحص مستوى السكر في الدم. يرجى تسجيل قيمتك.\"  \n  }  \n}  \nOutput:  \n{  \n  \"bodyEnglish\": \"Time to check your blood sugar levels. Taylor, keep showing up with strength — now’s a great moment to log.\",  \n  \"bodyArabic\": \"حان وقت فحص مستوى السكر في الدم. تايلور، استمري بقوة — والآن وقت مناسب لتسجيل القيمة.\",  \n  \"presentedTitleEnglish\": \"Time to Check\",  \n  \"presentedTitleArabic\": \"حان وقت الفحص\"  \n}\n\nExample 3:  \nInput:  \n{  \n  \"name\": \"Sarah\",  \n  \"age\": 78,  \n  \"gender\": \"female\",  \n  \"conditions\": [\"Arthritis\", \"Type 2 Diabetes\"],  \n  \"journey\": \"diabetes\",  \n  \"preferences\": { \"diet\": \"plant-based\", \"activity\": \"yoga\" },  \n  \"pregnancy\": false,  \n  \"age_group\": 2,  \n  \"message\": {  \n    \"title\": \"Daily Calorie Reminder\",  \n    \"content\": \"Remember to log your calories to stay on track.\",  \n    \"title_ar\": \"تذكير يومي بالسعرات\",  \n    \"content_ar\": \"تذكري تسجيل السعرات الحرارية للبقاء على المسار الصحيح.\"  \n  }  \n}  \nOutput:  \n{  \n  \"bodyEnglish\": \"Remember to log your calories to stay on track. Even gentle routines like this help build balance, Sarah.\",  \n  \"bodyArabic\": \"تذكري تسجيل السعرات الحرارية للبقاء على المسار الصحيح. حتى العادات البسيطة تمنحك توازناً، يا سارة.\",  \n  \"presentedTitleEnglish\": \"Daily Calorie Reminder\",  \n  \"presentedTitleArabic\": \"تذكير يومي بالسعرات\"  \n}`; \n} else {\n  prompt = `You are a medical assistant who personalizes supportive medical messages for patients (each personalized message output should be no more than 150 English characters)\n\n- English Message title: ${messageTitle}  \n- English Message content: ${messageContent}  \n- Arabic Message title: ${messageTitleArabic}  \n- Arabic Message content: ${messageContentArabic}\n\nYou will also receive a generic message (in English and Arabic) that should be used as the base content. Use the exact same words and idea as this: ${messageContent}. The message should be extremely similar to this: ${messageContent}.\n\nYou are only allowed one to mention one medical condition per message. If the base message (${messageContent}) already mentions one then keep it the same.\n\nYour output must be:  \n- Personal and human-like  \n- Supportive, gentle, and warm  \n- Emotionally intelligent — never clinical  \n- No more than 2 short sentences  \n- Returned in valid JSON format with the following four fields only:  \n  - \"bodyEnglish\"  \n  - \"bodyArabic\"  \n  - \"presentedTitleEnglish\"  \n  - \"presentedTitleArabic\"\n\nOnly personalize the content. Do not change the title. If any field is missing, the response is invalid and will fail to parse.\n\n---\n\nPersonalization Rules:  \n- Use the message title (${messageTitle}) to indicate the theme of your message.\n- Use the original message as the base (${messageContent}). Personalize around it, but do not replace or ignore its intent or action.\n- Every message must have a unique sentence structure. Vary how it begins, its rhythm, and punctuation.  \n- Do NOT start every message with the patient’s condition or name.  \n- Use the patient’s name in about 50% of messages. Vary its placement (start, middle, or end). If unused, the message must still feel personal.  \n- You may reference the patient’s conditions indirectly and naturally, such as:  \n  - “when breathing feels heavy”  \n  - “through skin flare-ups”  \n  - “despite joint pain”  \n  - “during blood pressure swings”  \n- Never mention conditions that are not in the patient’s list.\n\n---\n\nCustomization Layers  \n- Age group → ${ageGuidelines}  \n- Gender → ${genderGuidelines}  \n- Diet → ${dietGuidelines}  \n- Activity → ${activityGuidelines}  \n- ${pregnancyGuidelines}\n\n---\n\nExamples\n\nExample 1:  \nInput:  \n{  \n  \"name\": \"Ahmed\",  \n  \"age\": 60,  \n  \"gender\": \"male\",  \n  \"conditions\": [\"diabetes\", \"hypertension\"],  \n  \"preferences\": { \"diet\": \"balanced\", \"activity\": \"walking\" },  \n  \"pregnancy\": false,  \n  \"age_group\": 1,  \n  \"message\": {  \n    \"title\": \"New Day, New Start\",  \n    \"content\": \"Each day brings a chance to make positive changes. Take it one step at a time.\",  \n    \"title_ar\": \"يوم جديد، بداية جديدة\",  \n    \"content_ar\": \"كل يوم يجلب فرصة لإجراء تغييرات إيجابية. خطوة واحدة في كل مرة.\"  \n  }  \n}  \nOutput:  \n{  \n  \"bodyEnglish\": \"Each day brings a chance to make positive changes. Even when your energy dips, you’re making progress, Ahmed.\",  \n  \"bodyArabic\": \"كل يوم يجلب فرصة لإجراء تغييرات إيجابية. حتى عندما تنخفض طاقتك، أنت تتقدم يا أحمد.\",  \n  \"presentedTitleEnglish\": \"New Day, New Start\",  \n  \"presentedTitleArabic\": \"يوم جديد، بداية جديدة\"  \n}\n\nExample 2:  \nInput:  \n{  \n  \"name\": \"Layla\",  \n  \"age\": 35,  \n  \"gender\": \"female\",  \n  \"conditions\": [\"eczema\", \"high blood pressure\"],  \n  \"preferences\": { \"diet\": \"low fat\", \"activity\": \"yoga\" },  \n  \"pregnancy\": true,  \n  \"age_group\": 0,  \n  \"message\": {  \n    \"title\": \"Small Wins Matter\",  \n    \"content\": \"Celebrate every small step forward. They build up to big successes.\",  \n    \"title_ar\": \"النجاحات الصغيرة مهمة\",  \n    \"content_ar\": \"احتفل بكل خطوة صغيرة نحو الأمام. فهي تراكُم لتشكل نجاحات كبيرة.\"  \n  }  \n}  \nOutput:  \n{  \n  \"bodyEnglish\": \"Celebrate every small step forward. Layla, this season of change makes each one even more meaningful.\",  \n  \"bodyArabic\": \"احتفلي بكل خطوة صغيرة. ليلى، هذا الوقت من التغيير يمنحها معنى أعمق.\",  \n  \"presentedTitleEnglish\": \"Small Wins Matter\",  \n  \"presentedTitleArabic\": \"النجاحات الصغيرة مهمة\"  \n}\n\nExample 3:  \nInput:  \n{  \n  \"name\": \"Mona\",  \n  \"age\": 50,  \n  \"gender\": \"female\",  \n  \"conditions\": [\"arthritis\", \"High cholestrol\"],  \n  \"preferences\": { \"diet\": \"low carb\", \"activity\": \"pilates\" },  \n  \"pregnancy\": false,  \n  \"age_group\": 1,  \n  \"message\": {  \n    \"title\": \"Keep Moving Forward\",  \n    \"content\": \"Every step forward, no matter how small, is progress.\",  \n    \"title_ar\": \"استمري في التقدم\",  \n    \"content_ar\": \"كل خطوة إلى الأمام، مهما كانت صغيرة، تُعد تقدماً.\"  \n  }  \n}  \nOutput:  \n{  \n  \"bodyEnglish\": \"Every step forward, no matter how small, is progress. Even through joint pain, your strength shows.\",  \n  \"bodyArabic\": \"كل خطوة إلى الأمام، مهما كانت صغيرة، تُعد تقدماً. حتى مع آلام المفاصل، تظهر قوتكِ.\",  \n  \"presentedTitleEnglish\": \"Keep Moving Forward\",  \n  \"presentedTitleArabic\": \"استمري في التقدم\"  \n}\n`;\n}\n\nreturn {\n  json: {\n    prompt,\n    messageCode\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5360,
+        4352
+      ],
+      "id": "7cc4fbc7-55a4-4a42-ad40-9896988956e1",
+      "name": "PromptGeneration"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5136,
+        4352
+      ],
+      "id": "3b364ddd-b438-42f2-8f29-d642ccbfa8e0",
+      "name": "Wait",
+      "webhookId": "fc21cf41-5353-486b-9429-348fea2cc7ab"
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsedOutput = []; // Final array to store either parsed output or error info\n\nfor (const item of $input.all()) {\n  try {\n    // Attempt to access the LLM response string from different possible formats\n    const raw =\n      item.json.choices?.[0]?.message?.content ||  \n      item.json.text ||                             // Fallback for plain text\n      '';\n\n    // Try to extract a JSON string inside triple backticks using regex\n    const match = raw.match(/```(?:json)?\\s*([\\s\\S]*?)\\s*```/i);\n\n    let jsonString = '';\n\n    if (match) {\n      // If a triple backtick block is found, use its contents as the JSON string\n      jsonString = match[1].trim();\n    } else if (raw.trim().startsWith('{') && raw.includes(':')) {\n      // If the raw string looks like a plain JSON object (no backticks), use it directly\n      jsonString = raw.trim();\n    } else {\n      // If neither format is found, throw an error\n      throw new Error('No JSON found in backticks or raw format');\n    }\n\n    // Attempt to parse the JSON string\n    const cleanJson = JSON.parse(jsonString);\n\n    // On success, return the original item + the parsed JSON under `output`\n    parsedOutput.push({\n      json: {\n        ...item.json,\n        output: cleanJson\n      }\n    });\n\n  } catch (error) {\n    // On failure, return an object with the error message, original output, and raw input\n    parsedOutput.push({\n      json: {\n        error: error.message,\n        error_output: item.json.choices?.[0]?.message?.content || item.json.text || '',\n        original: item.json\n      }\n    });\n  }\n}\n\nreturn parsedOutput; // Return array of either clean JSON or error details"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4560,
+        4352
+      ],
+      "id": "52e31915-e290-4f7c-8188-b0195c9d243f",
+      "name": "OutputParser"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine the type of message based on the third part of the message code\nfunction getMessageType(code) {\n  if (typeof code !== 'string') return 'Unknown';\n  const parts = code.split('-');\n  const third = parts[2]?.trim().toUpperCase();\n  if (third === 'MD') return 'Medical';\n  if (third === 'MR') return 'Monitoring';\n  if (third === 'GE') return 'General';\n  return 'General'; // Default fallback\n}\n\nconst output = []; // Final array to store transformed message objects\n\n// Get all relevant nodes from n8n\nconst messages = $('OutputParser').all();        // LLM-generated message content\nconst codes = $('MessageCollection').all();      // Original message metadata\nconst inputs = $input.all();                     // May contain supplemental info like health parameter IDs\nconst patient = $('PatientInformation1').first().json; // Patient profile\n\n// Normalize pregnancy data from patient profile\nconst pregnancyRaw = patient.pregnancy ?? null;\nconst pregnancy = pregnancyRaw;\nconst isPregnant = pregnancy === \"true\";\n\n// Step 1: Build a lookup map: English title → original messageObject\nconst messageMap = {};\nfor (const item of codes) {\n  const msg = item.json.messageObject || {};\n  const title = msg.title?.trim();\n  if (title) {\n    messageMap[title] = msg;\n  }\n}\n\n// Step 2: Iterate through each parsed message and enrich it\nfor (let i = 0; i < messages.length; i++) {\n  const item = messages[i];\n  const message = item.json.output || {}; // Parsed LLM message\n  const presentedTitleEnglish = message.presentedTitleEnglish?.trim() || '';\n  const inputData = inputs[i]?.json || {}; // Additional metadata\n\n  // Get the original message metadata using the title\n  const originalMessage = messageMap[presentedTitleEnglish] || {};\n  const messageCode = originalMessage.message_code || '';\n  const messageType = getMessageType(messageCode); // Identify message type\n\n  // Initialize base message object with mandatory fields\n  const messageObj = {\n    presentedTitleEnglish,\n    bodyEnglish: message.bodyEnglish || '',\n    presentedTitleArabic: $input.first().json.output.presentedTitleArabic || '',\n    bodyArabic: message.bodyArabic || ''\n  };\n\n  // Type-specific enrichment for Medical messages\n  if (messageType === 'Medical') {\n    if (message.buttonTextEnglish?.trim()) {\n      messageObj.buttonTextEnglish = message.buttonTextEnglish;\n    }\n    if (message.buttonTextArabic?.trim()) {\n      messageObj.buttonTextArabic = message.buttonTextArabic;\n    }\n    if (originalMessage.article_id) {\n      messageObj.article_id = originalMessage.article_id;\n    }\n    if (originalMessage.message_id) {\n      messageObj.message_id = originalMessage.message_id;\n    }\n  }\n\n  // Type-specific enrichment for Monitoring messages\nelse if (messageType === 'Monitoring') {\n  const healthParamID = inputData?.data?.healthParameters?.edges?.[0]?.node?.id;\n  if (healthParamID) {\n    messageObj.health_parameter_id = healthParamID;\n  }\n\n  // FIX: Include originalMessage.message_id fallback\n  const messageID = message.messageID || inputData?.message_id || originalMessage.message_id;\n  if (messageID) {\n    messageObj.message_id = messageID;\n  }\n  }\n\n  // Type-specific enrichment for General messages\n  else if (messageType === 'General') {\n    if (originalMessage.message_id) {\n      messageObj.message_id = originalMessage.message_id;\n    }\n  }\n\n  // Construct the full message + profile output\n  output.push({\n    json: {\n      message_code: messageCode,\n      message_type: messageType,\n      patient_profile: {\n        name: patient.name,\n        age: patient.age,\n        gender: patient.gender,\n        journey: patient.journey || [],\n        pregnancy: pregnancy,\n        conditions: patient.conditions || [],\n        preferences: {\n          diet: patient.preferences?.preferences?.diet || '',\n          activity: patient.preferences?.preferences?.activity || ''\n        }\n      },\n      message: messageObj\n    }\n  });\n}\n\nreturn output; // Return the fully built array of enriched messages"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4336,
+        4464
+      ],
+      "id": "60dab120-2733-4470-9469-db0b036e6def",
+      "name": "FinalGeneration"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a021c05c-6e7c-43b8-81be-46b5b0aaa665",
+              "name": "Messages",
+              "value": "={{ $json.data.guidedCareJourneyItems.edges }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6896,
+        4480
+      ],
+      "id": "3d074fca-ef78-4698-b53d-2fe4a6501254",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "Messages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -6688,
+        4480
+      ],
+      "id": "84e5d589-3a1a-433d-b6cc-e85b55dde1b8",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "node.medicalMessage.code",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -6464,
+        4480
+      ],
+      "id": "84a0ff0a-9242-49d4-96e4-3be58ea974db",
+      "name": "Remove Duplicates",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b5172326-0ec9-44dd-9177-2d289371e07e",
+              "name": "messageObject",
+              "value": "={\n    \"title\": \"{{ $json.node.medicalMessage.messages[0].presentedTitleEnglish }}\",\n    \"title_ar\": \"{{ $json.node.medicalMessage.messages[0].presentedTitleArabic }}\",\n    \"content\": \"{{ $json.node.medicalMessage.messages[0].bodyEnglish }}\",\n    \"content_ar\": \"{{ $json.node.medicalMessage.messages[0].bodyArabic }}\",\n  \"message_code\": \"{{ $json.node.medicalMessage.code }}\",\n  \"message_id\":{{ $json.node.medicalMessage.id }},\n  \"article_id\": \"{{ $json.node.medicalMessage.messages[0].article.id }}\"\n  }",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6240,
+        4480
+      ],
+      "id": "ee4950d1-b2eb-42a9-b8a7-a99269df0466",
+      "name": "MessageCollection"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.test.iohealth.com/gateway/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=JWT {{ $('HTTP Request3').item.json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation personalizedMedicalMessageVariantCreate(\\r\\n  $input: PersonalizedMedicalMessageVariantInput!\\r\\n) {\\r\\n  personalizedMedicalMessageVariantCreate(\\r\\n   \\r\\n    input: $input\\r\\n  ) {\\r\\n  medicalMessageVariant{\\r\\n    id\\r\\n  }\\r\\n  }\\r\\n}\\r\\n\",\n  \"variables\": {\n    \"input\": {\n      \"patientId\": {{ $('Webhook').item.json.body.patientId }},\n      \"patientUserId\": {{ $('Webhook').item.json.body.patientUserId }},\n      \"medicalMessageID\": {{ $json.message.message_id }},\n      \"presentedTitleEnglish\": \"{{ $json.message.presentedTitleEnglish || '' }}\",\n      \"presentedTitleArabic\": \"{{ $json.message.presentedTitleArabic || ''  }}\",\n      \"bodyEnglish\": \"{{ $json.message.bodyEnglish || ''  }}\",\n      \"bodyArabic\": \"{{ $json.message.presentedTitleArabic || ''  }}\",\n      \"buttonTextArabic\": \"{{ $json.message.buttonTextArabic || '' }}\",\n      \"buttonTextEnglish\": \"{{ $json.message.buttonTextEnglish || ''  }}\",\n      \"contentURLEnglish\": \"{{ $json.message.contentURLEnglish || ''  }}\",\n      \"contentURLArabic\": \"{{ $json.message.contentURLArabic || ''  }}\",\n      \"articleId\": \"{{ $json.message.article_id || ''  }}\"\n    }\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4080,
+        4384
+      ],
+      "id": "c5838d23-0e8c-4b88-8c18-a286f2f639dc",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.test.iohealth.com/auth/realms/test-sehhati/api/login",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Cookie",
+              "value": "KC_SC=1752668979.052.1106.521230|f47856a9665e3e67b3fe2e081becc375"
+            },
+            {
+              "name": "cookie",
+              "value": "KC_SC=1752668979.052.1106.521230|f47856a9665e3e67b3fe2e081becc375;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "SuperAdminTestEnv@gmail.com"
+            },
+            {
+              "name": "password",
+              "value": "password"
+            },
+            {
+              "name": "appType",
+              "value": "ADMIN"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7360,
+        4304
+      ],
+      "id": "22c53444-4566-43a1-b61a-6c5d015a1076",
+      "name": "HTTP Request3"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n-interns.iohealth.im",
+            "user-agent": "Java/17.0.12",
+            "content-length": "211",
+            "accept": "application/json",
+            "content-type": "application/json",
+            "x-forwarded-for": "188.209.210.243",
+            "x-forwarded-host": "n8n-interns.iohealth.im",
+            "x-forwarded-proto": "https",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "name": "Anwar Takaful Test 433",
+            "age": 24,
+            "gender": "MALE",
+            "journey": "Tem All Activities 10 JUL",
+            "journeyId": 918,
+            "patientId": 4083,
+            "patientUserId": 8219,
+            "conditions": null,
+            "preference": {
+              "diet": null,
+              "activities": []
+            }
+          },
+          "webhookUrl": "https://n8n-interns.iohealth.im/webhook/b2ec6c67-2168-42ef-9a20-f0d0dc8d7e87",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-24T10:19:42.201Z",
+      "updatedAt": "2025-06-24T10:19:42.201Z",
+      "role": "workflow:owner",
+      "workflowId": "70F4DaghJzQO1ACY",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-07-30T08:54:58.000Z",
+  "versionId": "d194f57d-3cbf-4329-8c35-0bb9c6788d6a"
+}
