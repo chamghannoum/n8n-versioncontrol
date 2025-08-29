@@ -1,0 +1,412 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        []
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        []
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-06-11T07:06:33.509Z",
+  "id": "3TU9qGzhqnHWG9xO",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "PDFGenerator",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        400
+      ],
+      "id": "8335fa91-1cb8-4063-bd3a-6f8181ea2ed1",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        -240
+      ],
+      "id": "5df4ac80-5cec-4b52-bb75-a655173bc8f8",
+      "name": "When chat message received",
+      "webhookId": "7bd71ed4-3198-4ca3-9404-21e7ae19f3c5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "typeVersion": 1.6,
+      "position": [
+        240,
+        -240
+      ],
+      "id": "301419bc-c733-439f-842b-e0251df55f7d",
+      "name": "Question and Answer Chain"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        360,
+        20
+      ],
+      "id": "e1126512-72e2-4227-8f77-11d4b3eb1e44",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "ZofkBZbxP58Lgg5q",
+          "name": "Intern's GROQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        -180
+      ],
+      "id": "0a76a839-496f-430d-88e2-85b0c9ea1473",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "1iciduj3gyT93xje",
+          "name": "Layla's PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        40
+      ],
+      "id": "4ad8fb8e-5c78-4731-a319-4c2fa5647eeb",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "uoz1wWQLAEb9jfll",
+          "name": "Layla HuggingFaceApi Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1PECwDwz4fieBEZsRFTdAy3XBTUImPjqV3BIw2f3ZCDU",
+          "mode": "list",
+          "cachedResultName": "Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PECwDwz4fieBEZsRFTdAy3XBTUImPjqV3BIw2f3ZCDU/edit?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -100,
+        400
+      ],
+      "id": "254f3baa-22d7-446b-a0d8-30c4927445c4",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SkLfBmsZGYEH1nxS",
+          "name": "Layla's Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        120,
+        400
+      ],
+      "id": "a8cee550-0819-432f-bd2a-307fa2c8e65f",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Extract from File').item.json['Email of Adopter'] }}",
+        "subject": "={{ $('Extract from File').item.json.Name }} the {{ $('Extract from File').item.json.Type }} Adoption",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1220,
+        180
+      ],
+      "id": "8964feba-a67d-40b4-94c4-af682960ef04",
+      "name": "Gmail",
+      "webhookId": "593a4940-cdc3-42a6-8ed1-a04b059d7069",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "uNKQqayIuMpVn9sr",
+          "name": "Layla's Gmail Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Pet Adoption Report</title>\n  <style>\n    body {\n      font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;\n      margin: 40px;\n      background-color: #f9f9f9;\n    }\n\n    h1 {\n      text-align: center;\n      color: #333;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      background-color: white;\n      box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n    }\n\n    th, td {\n      border: 1px solid #ddd;\n      padding: 12px 15px;\n      text-align: left;\n    }\n\n    th {\n      background-color: #2f80ed;\n      color: white;\n    }\n\n    tr:nth-child(even) {\n      background-color: #f2f2f2;\n    }\n\n    tr:hover {\n      background-color: #eef5ff;\n    }\n  </style>\n</head>\n<body>\n  <h1>Pet Adoption Table</h1>\n  <table>\n    <thead>\n      <tr>\n        <th>Type</th>\n        <th>Name</th>\n        <th>Age</th>\n        <th>Rescue Date</th>\n        <th>Contact Number</th>\n        <th>Colour</th>\n        <th>Adopted</th>\n        <th>Email of Adopter</th>\n      </tr>\n    </thead>\n    <tbody>\n        <tr>\n          <td>{{ $('Extract from File').item.json.Type }}</td>\n          <td>{{ $('Extract from File').item.json.Name }}</td>\n          <td>{{ $('Extract from File').item.json.Age }}</td>\n          <td>{{ $json.formattedDate }}</td>\n          <td>{{ $('Extract from File').item.json['Contact Number'] }}</td>\n          <td>{{ $('Extract from File').item.json.Colour }}</td>\n          <td>{{ $('Extract from File').item.json['Adopted?'] }}</td>\n          <td>{{ $('Extract from File').item.json['Email of Adopter'] }}</td>\n        </tr>\n    </tbody>\n  </table>\n</body>\n</html>\n\n\n"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        420
+      ],
+      "id": "fe7131f1-4fa2-4463-b17f-1baf4b417a82",
+      "name": "HTML1"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json['Rescue Date'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        340,
+        400
+      ],
+      "id": "58a9a669-1f8b-4486-a2c4-2d1bf8082e91",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst pets = $input.all().map(item => item.json);\n\nlet html = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Pet Adoption Report</title>\n  <style>\n    body {\n      font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;\n      margin: 40px;\n      background-color: #f9f9f9;\n    }\n\n    h1 {\n      text-align: center;\n      color: #333;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      background-color: white;\n      box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n    }\n\n    th, td {\n      border: 1px solid #ddd;\n      padding: 12px 15px;\n      text-align: left;\n    }\n\n    th {\n      background-color: #2f80ed;\n      color: white;\n    }\n\n    tr:nth-child(even) {\n      background-color: #f2f2f2;\n    }\n\n    tr:hover {\n      background-color: #eef5ff;\n    }\n  </style>\n</head>\n<body>\n  <h1>Pet Adoption Table</h1>\n  <table>\n    <thead>\n      <tr>\n        <th>Type</th>\n        <th>Name</th>\n        <th>Age</th>\n        <th>Rescue Date</th>\n        <th>Contact Number</th>\n        <th>Colour</th>\n        <th>Adopted</th>\n        <th>Email of Adopter</th>\n      </tr>\n    </thead>\n    <tbody>\n`;\n\nfor (const pet of pets) {\n  html += `\n      <tr>\n        <td>${pet.Type || ''}</td>\n        <td>${pet.Name || ''}</td>\n        <td>${pet.Age || ''}</td>\n        <td>${pet[\"Rescue Date\"] || ''}</td>\n        <td>${pet[\"Contact Number\"] || ''}</td>\n        <td>${pet.Colour || ''}</td>\n        <td>${pet[\"Adopted?\"] || ''}</td>\n        <td>${pet[\"Email of Adopter\"] || ''}</td>\n      </tr>\n  `;\n}\n\nhtml += `\n    </tbody>\n  </table>\n</body>\n</html>\n`;\n\nreturn [{ json: { html } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        180
+      ],
+      "id": "8292dc08-364a-44c7-8345-9f591bc7d271",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "200dc025-7ad2-4bf6-acce-16087e1d4306",
+              "leftValue": "={{ $('Extract from File').item.json['Adopted?'] }}",
+              "rightValue": "Adopted",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        920,
+        200
+      ],
+      "id": "3ad2f75e-13a7-41aa-9c10-ceb15bab620d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        400
+      ],
+      "id": "2e556e73-eaf4-4ee0-9abe-4c3c14bfb242",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-versioncontrol",
+  "repo_owner": "chamghannoum",
+  "repo_path": "github.com/chamghannoum/n8n-versioncontrol/WorkflowBackups",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-11T07:06:33.524Z",
+      "updatedAt": "2025-06-11T07:06:33.524Z",
+      "role": "workflow:owner",
+      "workflowId": "3TU9qGzhqnHWG9xO",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-12T08:41:17.000Z",
+  "versionId": "1ef10343-c493-4831-b3bd-cf752f7c2e32"
+}
