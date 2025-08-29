@@ -1,0 +1,147 @@
+{
+  "active": false,
+  "connections": {
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-07T06:34:04.153Z",
+  "id": "8wsrkhdpqlYQ1ORN",
+  "isArchived": false,
+  "meta": null,
+  "name": "Get Table Schema",
+  "nodes": [
+    {
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        512
+      ],
+      "id": "85be39d4-0ec3-458e-b7f8-b8bb22dfe322",
+      "name": "Edit Fields",
+      "disabled": false,
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c6a9d761-7979-49d6-8048-bc7342e7a426",
+              "name": "mappings",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        320,
+        512
+      ],
+      "id": "6233e56a-fb6c-43ce-9817-0ec28642c773",
+      "name": "Aggregate",
+      "disabled": false,
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "data",
+        "include": "allFields",
+        "options": {}
+      }
+    },
+    {
+      "type": "n8n-nodes-base.postgres",
+      "parameters": {
+        "resource": "database",
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "typeVersion": 2.6,
+      "position": [
+        112,
+        512
+      ],
+      "id": "e3a1a531-66ff-4313-936f-f5890309c1bb",
+      "name": "Select rows from a table",
+      "disabled": false,
+      "issues": {
+        "parameters": {
+          "table": [
+            "Parameter \"Table\" is required."
+          ]
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "jROJGUHLmBcrl53I",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "id": "82cb3eb0-83f3-47f6-b2d3-38272a9953e6",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        320,
+        512
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-07T06:34:04.161Z",
+      "updatedAt": "2025-08-07T06:34:04.161Z",
+      "role": "workflow:owner",
+      "workflowId": "8wsrkhdpqlYQ1ORN",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-07T06:34:04.153Z",
+  "versionId": "3c517aa9-4a6b-4a6c-9335-f880573a9f33"
+}
