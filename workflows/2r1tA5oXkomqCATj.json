@@ -1,0 +1,420 @@
+{
+  "active": false,
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-11T06:05:58.229Z",
+  "id": "2r1tA5oXkomqCATj",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "ScientificFactForm",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Test Form",
+        "formDescription": "Testing form description\n",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "placeholder": "Enter your name here",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Country",
+              "placeholder": "e.g \"UAE\""
+            },
+            {
+              "fieldLabel": "Would you like to sign up for alerts",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "No"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your best email",
+              "fieldType": "email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -660,
+        120
+      ],
+      "id": "f19ae91f-44e7-44b0-8c88-5621690fa999",
+      "name": "On form submission",
+      "webhookId": "4ba916e4-c503-43a2-9e82-3cf0263d6edd"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json['Would you like to sign up for alerts'] }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Yes to Alerts",
+              "description": "Email addresses to send alerts to"
+            },
+            {
+              "category": "No to Alerts",
+              "description": "Email addresses to not send alerts to"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        420
+      ],
+      "id": "fed317db-cadf-4fff-88a4-b30dddda2922",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "={{ $('Text Classifier').item.json['What is your best email'] }}",
+        "subject": "Type Specification Required",
+        "message": "=Hello {{ $json['First Name'] }} from {{ $json.Country }} . What type of facts would you like to receive daily, scientific or non-scientific?",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What type of facts would you like to receive?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Scientific"
+                  },
+                  {
+                    "option": "Non-Scientific"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        -120
+      ],
+      "id": "29b90108-91a7-4746-b920-ddb598c1bd58",
+      "name": "Gmail1",
+      "webhookId": "8902d104-480e-4133-a68e-f805f9997c71",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "uNKQqayIuMpVn9sr",
+          "name": "Layla's Gmail Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {
+          "temperature": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        40
+      ],
+      "id": "c823cc87-0b89-4f50-928d-a3f86744b3d4",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "ZofkBZbxP58Lgg5q",
+          "name": "Intern's GROQ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Text Classifier').item.json['What is your best email'] }}",
+        "subject": "=Your daily  {{ $('Gmail1').item.json.data['What type of facts would you like to receive?'] }} funfact",
+        "emailType": "text",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1880,
+        -160
+      ],
+      "id": "3571a10e-e02b-4dc7-88f7-5d48950144b9",
+      "name": "Gmail",
+      "webhookId": "0ecf4973-d55e-4ddd-83f8-63d92ea5cc43",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "uNKQqayIuMpVn9sr",
+          "name": "Layla's Gmail Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=FAct KIND: {{ $json.data['What type of facts would you like to receive?'] }}",
+        "options": {
+          "systemMessage": "=You are a fact-providing agent that provides unique facts to the user. The premise should be {{ $json.data['What type of facts would you like to receive?'] }} \n\nProvide only 1 fun fact that is short and concise"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        -180
+      ],
+      "id": "18e58be3-03fe-43df-9fbc-c874ed071164",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c6c10a62-788d-4674-8b49-fc82e4e6f13b",
+              "leftValue": "={{ $json['Would you like to sign up for alerts'] }}",
+              "rightValue": "No",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        100
+      ],
+      "id": "543f8a79-d9b3-44be-bb95-6bf2e8d178ac",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json.submittedAt }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        660,
+        140
+      ],
+      "id": "a52a34a5-8a67-4f05-81e4-92ecd05de246",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        400,
+        120
+      ],
+      "id": "e4e0640e-4cbd-4750-8ad7-38cccd8c29aa",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "860fce37-f6dc-4bc1-be1a-b52d536f6728",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        520,
+        240
+      ],
+      "id": "7da75519-6e0e-4140-874d-988560c0ceb5",
+      "name": "Webhook",
+      "webhookId": "860fce37-f6dc-4bc1-be1a-b52d536f6728"
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "First Name": "John",
+          "Country": "jamaica",
+          "Would you like to sign up for alerts": "Yes",
+          "What is your best email": "",
+          "submittedAt": "2025-06-11T11:14:48.898+00:00",
+          "formMode": "test"
+        }
+      },
+      {
+        "json": {
+          "First Name": "Mark",
+          "Country": "Jordan",
+          "Would you like to sign up for alerts": "No",
+          "What is your best email": "",
+          "submittedAt": "2025-06-11T11:14:48.898+00:00",
+          "formMode": "test"
+        }
+      },
+      {
+        "json": {
+          "First Name": "Layla",
+          "Country": "Pakistan",
+          "Would you like to sign up for alerts": "Yes",
+          "What is your best email": "",
+          "submittedAt": "2025-06-11T11:14:48.898+00:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dubai",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-06-11T06:05:58.238Z",
+      "updatedAt": "2025-06-11T06:05:58.238Z",
+      "role": "workflow:owner",
+      "workflowId": "2r1tA5oXkomqCATj",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-11T11:55:11.000Z",
+  "versionId": "6bca5049-6967-4585-93f9-4a6944ed417f"
+}
