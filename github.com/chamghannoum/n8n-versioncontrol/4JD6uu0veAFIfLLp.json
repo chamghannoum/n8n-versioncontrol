@@ -1,0 +1,1037 @@
+{
+  "active": false,
+  "connections": {
+    "Call Predict Model": {
+      "main": [
+        [
+          {
+            "node": "processData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Call Predict Model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SDCP_criteria": {
+      "main": [
+        [
+          {
+            "node": "normalizeMapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "normalizeMapping": {
+      "main": [
+        [
+          {
+            "node": "populateHTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "populateHTML": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "processData": {
+      "main": [
+        [
+          {
+            "node": "SDCP_criteria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-08-25T12:07:53.856Z",
+  "id": "4JD6uu0veAFIfLLp",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Predict Model (v2)",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://example.com",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json}} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        64,
+        48
+      ],
+      "id": "c8351dbb-af5d-4734-b969-b8f8b39cc662",
+      "name": "Call Predict Model"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "231290cd-acc9-4e47-b152-8570ec28581b",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        48
+      ],
+      "id": "42a684e2-6c40-4385-ae91-ed16b21c0a1d",
+      "name": "Webhook",
+      "webhookId": "231290cd-acc9-4e47-b152-8570ec28581b"
+    },
+    {
+      "parameters": {
+        "jsCode": "const processedData = $('processData').first().json; \nconst rawSheetsData = $('SDCP_criteria').all(); \nconst originalPatientData = $('Webhook').first().json;\n\n// Extract the actual criteria data\nlet criteriaArray = [];\nif (Array.isArray(rawSheetsData)) {\n  rawSheetsData.forEach(sheet => {\n    if (sheet && sheet.json) {\n      if (Array.isArray(sheet.json)) {\n        criteriaArray = criteriaArray.concat(sheet.json);\n      } else {\n        criteriaArray.push(sheet.json);\n      }\n    } else if (Array.isArray(sheet)) {\n      criteriaArray = criteriaArray.concat(sheet);\n    } else if (sheet) {\n      criteriaArray.push(sheet);\n    }\n  });\n} else if (rawSheetsData && rawSheetsData.json) {\n  criteriaArray = Array.isArray(rawSheetsData.json) ? rawSheetsData.json : [rawSheetsData.json];\n} else {\n  criteriaArray = [rawSheetsData];\n}\n\n// Filter out empty/invalid entries\ncriteriaArray = criteriaArray.filter(item => \n  item && \n  (item['Field Name'] || item.Field_Name) && \n  (item['Field Name'] || item.Field_Name).trim() !== ''\n);\n\n// Dynamic feature-to-criteria matching function\nfunction findMatchingCriteria(featureName) {\n  const results = [];\n  const normalizedFeature = featureName.toLowerCase().replace(/[_-]/g, '');\n  \n  criteriaArray.forEach((criteria, index) => {\n    const fieldName = (criteria['Field Name'] || criteria.Field_Name || '').toLowerCase().replace(/[_-]/g, '');\n    const parameter = (criteria.Parameter || '').toLowerCase();\n    \n    if (!fieldName) return; \n    \n    let matchScore = 0;\n    let matchType = '';\n    \n    if (featureName === 'lab_systolic_bp') {\n      if (fieldName.includes('systolic') && fieldName.includes('blood')) {\n        matchScore = 1.0;\n        matchType = 'exact_systolic';\n      }\n    }\n    else if (featureName === 'lab_diastolic_bp') {\n      if (fieldName.includes('diastolic') && fieldName.includes('blood')) {\n        matchScore = 1.0;\n        matchType = 'exact_diastolic';\n      }\n    }\n    else if (featureName === 'lab_cholesterol') {\n      if (fieldName.includes('cholesterol') || parameter.includes('cholesterol')) {\n        matchScore = 0.95;\n        matchType = 'cholesterol_match';\n      }\n    }\n    else if (featureName.includes('glucose')) {\n      if (fieldName.includes('glucose') || parameter.includes('glucose')) {\n        matchScore = 0.9;\n        matchType = 'glucose_match';\n      }\n    }\n    else if (featureName.includes('hba1c')) {\n      if (fieldName.includes('hba1c') || parameter.includes('hba1c')) {\n        matchScore = 0.9;\n        matchType = 'hba1c_match';\n      }\n    }\n    else if (featureName.includes('age')) {\n      if (fieldName.includes('age')) {\n        matchScore = 0.95;\n        matchType = 'age_match';\n      }\n    }\n    else if (fieldName.includes(normalizedFeature) || normalizedFeature.includes(fieldName)) {\n      matchScore = 0.8;\n      matchType = 'generic';\n    }\n    \n    if (matchScore > 0) {\n      console.log(`  Match found: ${criteria['Field Name'] || criteria.Field_Name} (score: ${matchScore}, type: ${matchType})`);\n      results.push({\n        criteria,\n        matchScore,\n        matchType,\n        fieldName: criteria['Field Name'] || criteria.Field_Name\n      });\n    }\n  });\n  \n  const bestMatch = results.sort((a, b) => b.matchScore - a.matchScore)[0] || null;  \n  return bestMatch;\n}\n\n// Enhanced threshold parsing\nfunction parseThreshold(thresholdValue, fieldName = '') {\n  if (!thresholdValue || thresholdValue === 'N/A' || thresholdValue === '') return null;\n  \n  const str = thresholdValue.toString().trim();\n  \n  // Handle specific patterns\n  if (str.includes('>=')) {\n    const value = parseFloat(str.replace('>=', '').trim());\n    return { type: 'gte', value };\n  }\n  if (str.includes('<=')) {\n    const value = parseFloat(str.replace('<=', '').trim());\n    return { type: 'lte', value };\n  }\n  if (str.startsWith('> ') || (str.startsWith('>') && !str.startsWith('>='))) {\n    const value = parseFloat(str.replace('>', '').trim());\n    return { type: 'gt', value };\n  }\n  if (str.startsWith('< ') || (str.startsWith('<') && !str.startsWith('<='))) {\n    const value = parseFloat(str.replace('<', '').trim());\n    return { type: 'lt', value };\n  }\n  \n  // Handle ranges\n  const rangeMatch = str.match(/(\\d+(?:\\.\\d+)?)\\s*[-–]\\s*(\\d+(?:\\.\\d+)?)/);\n  if (rangeMatch) {\n    return {\n      type: 'range',\n      min: parseFloat(rangeMatch[1]),\n      max: parseFloat(rangeMatch[2])\n    };\n  }\n  \n  // Handle single numbers\n  const numValue = parseFloat(str);\n  if (!isNaN(numValue)) {\n    return { type: 'exact', value: numValue };\n  }\n  \n  // Handle text\n  return { type: 'text', value: str };\n}\n\n// Enhanced threshold checking\nfunction checkThreshold(value, threshold, fieldName = '') {\n  if (!threshold) return false;\n  \n  const numValue = parseFloat(value);\n  if (isNaN(numValue) && threshold.type !== 'text') return false;\n    \n  switch (threshold.type) {\n    case 'range':\n      const inRange = numValue >= threshold.min && numValue <= threshold.max;\n      console.log(`    Range check (${threshold.min}-${threshold.max}): ${inRange}`);\n      return inRange;\n    case 'gte':\n      const isGte = numValue >= threshold.value;\n      console.log(`    GTE check (>= ${threshold.value}): ${isGte}`);\n      return isGte;\n    case 'lte':\n      const isLte = numValue <= threshold.value;\n      console.log(`    LTE check (<= ${threshold.value}): ${isLte}`);\n      return isLte;\n    case 'gt':\n      const isGt = numValue > threshold.value;\n      console.log(`    GT check (> ${threshold.value}): ${isGt}`);\n      return isGt;\n    case 'lt':\n      const isLt = numValue < threshold.value;\n      console.log(`    LT check (< ${threshold.value}): ${isLt}`);\n      return isLt;\n    case 'exact':\n      return numValue === threshold.value;\n    case 'text':\n      return value.toString().toLowerCase().includes(threshold.value.toLowerCase());\n    default:\n      return false;\n  }\n}\n\n// Enhanced risk level determination \nfunction getRiskLevel(value, criteria) {\n  if (!criteria || value === null || value === undefined) return 'unknown';\n  \n  const fieldName = criteria['Field Name'] || criteria.Field_Name;\n  \n  const thresholds = {\n    high_risk: parseThreshold(criteria['High Risk Threshold'], fieldName),\n    max_risk: parseThreshold(criteria['Max. Risk Threshold'], fieldName),\n    min_risk: parseThreshold(criteria['Min. Risk Threshold'], fieldName),\n    normal: parseThreshold(criteria['Normal Range/Value'], fieldName)\n  };  \n  // Check thresholds in order of severity\n  if (thresholds.high_risk && checkThreshold(value, thresholds.high_risk, fieldName)) {\n    console.log(`  Result: high_risk`);\n    return 'high_risk';\n  }\n  if (thresholds.max_risk && checkThreshold(value, thresholds.max_risk, fieldName)) {\n    console.log(`  Result: moderate_risk`);\n    return 'moderate_risk';\n  }\n  if (thresholds.min_risk && checkThreshold(value, thresholds.min_risk, fieldName)) {\n    console.log(`  Result: mild_risk`);\n    return 'mild_risk';\n  }\n  if (thresholds.normal && checkThreshold(value, thresholds.normal, fieldName)) {\n    console.log(`  Result: normal`);\n    return 'normal';\n  }\n  return 'unknown';\n}\n\n// Special feature handling\nfunction handleSpecialFeatures(feature, value, direction) {\n  const featureName = feature.feature;\n  \n  // Handle diagnosis codes\n  if (featureName.startsWith('diagnosis_code_')) {\n    if (value === 'Not Present') {\n      return {\n        actual_risk_level: 'normal',\n        expected_direction: -1,\n        aligned: direction === 'decreased risk'\n      };\n    } else {\n      const isDiabetesCode = value.startsWith('E10') || value.startsWith('E11');\n      const isHypertensionCode = value === 'I10';\n      \n      if (isDiabetesCode) {\n        return {\n          actual_risk_level: 'high_risk',\n          expected_direction: 1,\n          aligned: direction === 'increased risk'\n        };\n      } else if (isHypertensionCode) {\n        return {\n          actual_risk_level: 'moderate_risk',\n          expected_direction: 1,\n          aligned: direction === 'increased risk'\n        };\n      }\n    }\n  }\n  \n  // Handle medication codes\n  if (featureName.startsWith('code_')) {\n    const medType = featureName.replace('code_', '');\n    \n    if (value === 'Not Prescribed') {\n      if (medType === 'diabetes') {\n        return {\n          actual_risk_level: 'normal',\n          expected_direction: 1,\n          aligned: direction === 'increased risk'\n        };\n      } else if (medType === 'metformin') {\n        return {\n          actual_risk_level: 'untreated',\n          expected_direction: 1,\n          aligned: direction === 'increased risk'\n        };\n      }\n    } else {\n      if (medType === 'metformin') {\n        return {\n          actual_risk_level: 'treated',\n          expected_direction: -1,\n          aligned: direction === 'decreased risk'\n        };\n      }\n    }\n  }\n  \n  // Handle text features\n  if (featureName.startsWith('text_')) {\n    if (featureName === 'text_control') {\n      const hasPositiveControl = value.toLowerCase().includes('control') || \n                                value.toLowerCase().includes('improved') ||\n                                value.toLowerCase().includes('adherence');\n      \n      return {\n        actual_risk_level: hasPositiveControl ? 'positive_mention' : 'neutral',\n        expected_direction: hasPositiveControl ? -1 : 0,\n        aligned: hasPositiveControl && direction === 'decreased risk'\n      };\n    }\n  }\n  \n  // Handle encounter type\n  if (featureName === 'encounter_type') {\n    const isRoutine = value === 'Follow-up' || value === 'Routine';\n    return {\n      actual_risk_level: isRoutine ? 'routine' : 'urgent',\n      expected_direction: isRoutine ? -1 : 1,\n      aligned: (isRoutine && direction === 'decreased risk') || \n               (!isRoutine && direction === 'increased risk')\n    };\n  }\n  \n  return null;\n}\n\n// Main validation function\nfunction validateFeatures(featuresArray) {\n  const validations = [];\n    \n  featuresArray.forEach((feature, index) => {    \n    const match = findMatchingCriteria(feature.feature);\n    \n    let validation = {\n      encounter_date: feature.encounter_date,\n      feature: feature.feature,\n      actual_value: feature.value,\n      predicted_direction: feature.direction,\n      aligned: false,\n      actual_risk_level: 'unknown',\n      expected_direction: null,\n      match_confidence: match ? match.matchScore : 0,\n      match_type: match ? match.matchType : 'no_match',\n      guideline_reference: '',\n      notes: []\n    };\n    \n    const specialResult = handleSpecialFeatures(feature, feature.value, feature.direction);\n    \n    if (specialResult) {\n      validation.actual_risk_level = specialResult.actual_risk_level;\n      validation.expected_direction = specialResult.expected_direction;\n      validation.aligned = specialResult.aligned;\n      validation.notes.push('Handled via special logic');\n    }\n    // Use matched criteria\n    else if (match && feature.value !== 'Unknown' && feature.value !== 'Not Present' && feature.value !== 'Not Prescribed') {\n      const criteria = match.criteria;\n      validation.guideline_reference = criteria['SDCP Reference'] || '';\n      \n      const actualRiskLevel = getRiskLevel(feature.value, criteria);\n      validation.actual_risk_level = actualRiskLevel;\n      \n      // Determine expected direction based on risk level\n      const isHighRisk = ['high_risk', 'moderate_risk'].includes(actualRiskLevel);\n      validation.expected_direction = isHighRisk ? 1 : -1;\n      \n      // Check alignment\n      const predictedIncreasedRisk = feature.direction === 'increased risk';\n      validation.aligned = (isHighRisk && predictedIncreasedRisk) || \n                          (!isHighRisk && !predictedIncreasedRisk);\n      \n      validation.notes.push(`Matched to ${criteria['Field Name'] || criteria.Field_Name} (${Math.round(match.matchScore * 100)}% confidence)`);\n    }\n    else {\n      validation.notes.push('No matching criteria found or invalid value');\n    }\n    \n    validations.push(validation);\n  });\n  \n  return validations;\n}\nconst validations = validateFeatures(processedData.features_for_alignment);\n\n// Calculate summary statistics\nconst totalFeatures = validations.length;\nconst alignedFeatures = validations.filter(v => v.aligned).length;\nconst matchedFeatures = validations.filter(v => v.match_confidence > 0.7).length;\nconst alignmentPercentage = totalFeatures > 0 ? (alignedFeatures / totalFeatures) * 100 : 0;\n\nreturn {\n  patient_id: originalPatientData.patient_id,\n  patient_age: processedData.age,\n  prediction_risk_score: processedData.risk_score,\n  prediction_stratification: processedData.stratification,\n  validation_summary: {\n    total_features_validated: totalFeatures,\n    matched_features_count: matchedFeatures,\n    aligned_features_count: alignedFeatures,\n    alignment_percentage: Math.round(alignmentPercentage * 100) / 100,\n    overall_alignment: alignmentPercentage >= 70 ? 'ALIGNED' : 'NOT_ALIGNED',\n    match_success_rate: Math.round((matchedFeatures / totalFeatures) * 100)\n  },\n  detailed_validations: validations,\n  validation_timestamp: new Date().toISOString(),\n  guidelines_source: 'SDCP Guidelines 2021'\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        48
+      ],
+      "id": "c5c4d3b9-899c-4752-9572-0c660f5322c8",
+      "name": "normalizeMapping"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ANdZ7Lsp-Ii6S3ayPQUUfqxX8cDHEKBM2FVHu4fT4eQ",
+          "mode": "list",
+          "cachedResultName": "diabetes_risk_validation_criteria",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ANdZ7Lsp-Ii6S3ayPQUUfqxX8cDHEKBM2FVHu4fT4eQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1015196392,
+          "mode": "list",
+          "cachedResultName": "diabetes_risk_validation_criter",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ANdZ7Lsp-Ii6S3ayPQUUfqxX8cDHEKBM2FVHu4fT4eQ/edit#gid=1015196392"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        48
+      ],
+      "id": "cbe86098-9bbc-49f5-81c1-c9f8f108c87d",
+      "name": "SDCP_criteria",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zikqy2OQmH7886X6",
+          "name": "Cham's Google Sheets Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "{{$json.html}}"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        48
+      ],
+      "id": "c7f0e75b-989d-46b6-b6c0-1edf55b10b92",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "jsCode": "const validationData = $input.first().json;\n\nconst htmlContent = `\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>SDCP Guidelines Validation Results</title>\n    <style>\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n\n        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n            min-height: 100vh;\n            padding: 20px;\n        }\n\n        .container {\n            max-width: 1400px;\n            margin: 0 auto;\n            background: white;\n            border-radius: 15px;\n            box-shadow: 0 20px 40px rgba(0,0,0,0.1);\n            overflow: hidden;\n        }\n\n        .header {\n            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);\n            color: white;\n            padding: 30px;\n            text-align: center;\n        }\n\n        .header h1 {\n            font-size: 2.5rem;\n            margin-bottom: 10px;\n            font-weight: 300;\n        }\n\n        .header .subtitle {\n            font-size: 1.1rem;\n            opacity: 0.9;\n        }\n\n        .summary-cards {\n            display: grid;\n            grid-template-columns: repeat(4, 1fr);\n            gap: 15px;\n            padding: 20px 30px;\n            background: #f8f9fa;\n            border-bottom: 1px solid #e9ecef;\n        }\n\n        .summary-card {\n            background: white;\n            padding: 15px;\n            border-radius: 8px;\n            box-shadow: 0 3px 10px rgba(0,0,0,0.08);\n            text-align: center;\n            transition: transform 0.3s ease;\n        }\n\n        .summary-card:hover {\n            transform: translateY(-3px);\n        }\n\n        .summary-card .metric {\n            font-size: 1.8rem;\n            font-weight: bold;\n            margin-bottom: 3px;\n        }\n\n        .summary-card .label {\n            color: #6c757d;\n            font-size: 0.8rem;\n            text-transform: uppercase;\n            letter-spacing: 0.5px;\n        }\n\n        .metric.aligned { color: #28a745; }\n        .metric.partially-aligned { color: #ffc107; }\n        .metric.not-aligned { color: #dc3545; }\n        .metric.not-mentioned { color: #6c757d; }\n\n        .table-container {\n            padding: 30px;\n            overflow-x: auto;\n        }\n\n        .validation-table {\n            width: 100%;\n            border-collapse: collapse;\n            background: white;\n            border-radius: 12px;\n            overflow: hidden;\n            box-shadow: 0 5px 15px rgba(0,0,0,0.08);\n        }\n\n        .validation-table th {\n            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);\n            color: white;\n            padding: 18px 15px;\n            text-align: left;\n            font-weight: 600;\n            font-size: 0.9rem;\n            text-transform: uppercase;\n            letter-spacing: 0.5px;\n        }\n\n        .validation-table th:nth-child(1) { width: 25%; } /* Feature */\n        .validation-table th:nth-child(2) { width: 20%; } /* Date */\n        .validation-table th:nth-child(3) { width: 25%; } /* Actual Value */\n        .validation-table th:nth-child(4) { width: 15%; } /* Prediction */\n        .validation-table th:nth-child(5) { width: 15%; } /* Alignment Status */\n\n        .validation-table td {\n            padding: 15px;\n            border-bottom: 1px solid #e9ecef;\n            vertical-align: middle;\n            word-wrap: break-word;\n            overflow-wrap: break-word;\n        }\n\n        .validation-table td:nth-child(1) { width: 25%; } /* Feature */\n        .validation-table td:nth-child(2) { width: 20%; } /* Date */\n        .validation-table td:nth-child(3) { width: 25%; } /* Actual Value */\n        .validation-table td:nth-child(4) { width: 15%; } /* Prediction */\n        .validation-table td:nth-child(5) { width: 15%; } /* Alignment Status */\n\n        .validation-table tbody tr {\n            transition: background-color 0.3s ease;\n        }\n\n        .validation-table tbody tr:hover {\n            background-color: #f8f9fa;\n        }\n\n        .status-badge {\n            padding: 6px 12px;\n            border-radius: 20px;\n            font-size: 0.75rem;\n            font-weight: 600;\n            text-transform: uppercase;\n            letter-spacing: 0.3px;\n            display: inline-block;\n            min-width: 90px;\n            text-align: center;\n            line-height: 1.2;\n        }\n\n        .status-aligned {\n            background: #d4edda;\n            color: #155724;\n            border: 1px solid #c3e6cb;\n        }\n\n        .status-partially-aligned {\n            background: #fff3cd;\n            color: #856404;\n            border: 1px solid #ffeaa7;\n        }\n\n        .status-not-aligned {\n            background: #f8d7da;\n            color: #721c24;\n            border: 1px solid #f5c6cb;\n        }\n\n        .status-not-mentioned {\n            background: #e9ecef;\n            color: #495057;\n            border: 1px solid #ced4da;\n        }\n\n        .feature-name {\n            font-family: 'Monaco', 'Menlo', monospace;\n            background: #f8f9fa;\n            padding: 4px 8px;\n            border-radius: 4px;\n            font-size: 0.85rem;\n        }\n\n        .value-cell {\n            font-weight: 600;\n            color: #495057;\n            font-size: 0.85rem;\n        }\n\n        .date-cell {\n            color: #6c757d;\n            font-size: 0.9rem;\n        }\n\n        .direction-cell {\n            font-size: 0.85rem;\n        }\n\n        .direction-increased {\n            color: #dc3545;\n        }\n\n        .direction-decreased {\n            color: #28a745;\n        }\n\n        .notes-cell {\n            font-size: 0.8rem;\n            color: #6c757d;\n            max-width: 200px;\n            word-wrap: break-word;\n        }\n\n        .confidence-bar {\n            width: 100%;\n            height: 8px;\n            background: #e9ecef;\n            border-radius: 4px;\n            overflow: hidden;\n        }\n\n        .confidence-fill {\n            height: 100%;\n            background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);\n            transition: width 0.3s ease;\n        }\n\n        .patient-info {\n            background: #f8f9fa;\n            padding: 20px 30px;\n            border-bottom: 1px solid #e9ecef;\n        }\n\n        .patient-info .info-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n            gap: 15px;\n        }\n\n        .info-item {\n            display: flex;\n            align-items: center;\n        }\n\n        .info-label {\n            font-weight: 600;\n            margin-right: 10px;\n            color: #495057;\n        }\n\n        .info-value {\n            color: #6c757d;\n        }\n\n        .risk-score {\n            font-size: 1.2rem;\n            font-weight: bold;\n            padding: 5px 10px;\n            border-radius: 6px;\n        }\n\n        .risk-high { background: #f8d7da; color: #721c24; }\n        .risk-moderate { background: #fff3cd; color: #856404; }\n        .risk-low { background: #d4edda; color: #155724; }\n\n        @media (max-width: 768px) {\n            .header h1 {\n                font-size: 2rem;\n            }\n            \n            .summary-cards {\n                grid-template-columns: repeat(2, 1fr);\n                padding: 15px;\n                gap: 10px;\n            }\n            \n            .summary-card .metric {\n                font-size: 1.5rem;\n            }\n            \n            .table-container {\n                padding: 20px;\n            }\n            \n            .validation-table th,\n            .validation-table td {\n                padding: 10px 8px;\n                font-size: 0.85rem;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <div class=\"header\">\n            <h1>SDCP Guidelines Validation Results</h1>\n            <div class=\"subtitle\">Saudi Diabetes Clinical Practice Guidelines Compliance Report</div>\n        </div>\n\n        <div class=\"patient-info\">\n            <div class=\"info-grid\">\n                <div class=\"info-item\">\n                    <span class=\"info-label\">Patient ID:</span>\n                    <span class=\"info-value\">${validationData.patient_id || 'N/A'}</span>\n                </div>\n                <div class=\"info-item\">\n                    <span class=\"info-label\">Age:</span>\n                    <span class=\"info-value\">${validationData.patient_age ? validationData.patient_age + ' years' : 'N/A'}</span>\n                </div>\n                <div class=\"info-item\">\n                    <span class=\"info-label\">Risk Score:</span>\n                    <span class=\"risk-score ${getRiskScoreClass(validationData.prediction_stratification)}\">${validationData.prediction_risk_score ? validationData.prediction_risk_score.toFixed(2) : 'N/A'}</span>\n                </div>\n                <div class=\"info-item\">\n                    <span class=\"info-label\">Stratification:</span>\n                    <span class=\"info-value\">${validationData.prediction_stratification ? validationData.prediction_stratification.replace('_', ' ').toUpperCase() : 'N/A'}</span>\n                </div>\n            </div>\n        </div>\n\n        ${generateSummaryCards(validationData)}\n        ${generateValidationTable(validationData)}\n    </div>\n</body>\n</html>\n`;\n\n// Helper functions\nfunction getRiskScoreClass(stratification) {\n    switch((stratification || '').toLowerCase()) {\n        case 'high_risk': return 'risk-high';\n        case 'moderate_risk': return 'risk-moderate';\n        case 'low_risk': return 'risk-low';\n        default: return 'risk-moderate';\n    }\n}\n\nfunction getAlignmentStatus(validation) {\n    if (validation.aligned === true) {\n        return { status: 'aligned', label: 'Aligned', class: 'status-aligned' };\n    } else if (validation.match_confidence > 0.5 && !validation.aligned) {\n        return { status: 'partially-aligned', label: 'Partially Aligned', class: 'status-partially-aligned' };\n    } else if (validation.match_confidence === 0 && validation.notes && validation.notes.some(note => note.includes('special logic'))) {\n        return { status: 'aligned', label: 'Aligned', class: 'status-aligned' };\n    } else if (validation.actual_value === 'Unknown' || validation.actual_value === 'Not Present') {\n        return { status: 'not-mentioned', label: 'Not Mentioned', class: 'status-not-mentioned' };\n    } else {\n        return { status: 'not-aligned', label: 'Not Aligned', class: 'status-not-aligned' };\n    }\n}\n\nfunction generateSummaryCards(data) {\n    if (!data.detailed_validations) return '<div class=\"summary-cards\"></div>';\n    \n    let counts = { aligned: 0, 'partially-aligned': 0, 'not-aligned': 0, 'not-mentioned': 0 };\n    \n    data.detailed_validations.forEach(validation => {\n        const alignmentInfo = getAlignmentStatus(validation);\n        counts[alignmentInfo.status]++;\n    });\n    \n    return `\n        <div class=\"summary-cards\">\n            <div class=\"summary-card\">\n                <div class=\"metric aligned\">${counts.aligned}</div>\n                <div class=\"label\">Aligned</div>\n            </div>\n            <div class=\"summary-card\">\n                <div class=\"metric partially-aligned\">${counts['partially-aligned']}</div>\n                <div class=\"label\">Partially Aligned</div>\n            </div>\n            <div class=\"summary-card\">\n                <div class=\"metric not-aligned\">${counts['not-aligned']}</div>\n                <div class=\"label\">Not Aligned</div>\n            </div>\n            <div class=\"summary-card\">\n                <div class=\"metric not-mentioned\">${counts['not-mentioned']}</div>\n                <div class=\"label\">Not Mentioned</div>\n            </div>\n        </div>\n    `;\n}\n\nfunction generateValidationTable(data) {\n    if (!data.detailed_validations) return '<div class=\"table-container\">No validation data available</div>';\n    \n    const rows = data.detailed_validations.map(validation => {\n        const alignmentInfo = getAlignmentStatus(validation);\n        return `\n            <tr>\n                <td>\n                    <span class=\"feature-name\">${validation.feature}</span>\n                </td>\n                <td class=\"date-cell\">${validation.encounter_date}</td>\n                <td class=\"value-cell\">${validation.actual_value}</td>\n                <td class=\"direction-cell\">\n                    <span class=\"${validation.predicted_direction === 'increased risk' ? 'direction-increased' : 'direction-decreased'}\">\n                        ${validation.predicted_direction}\n                    </span>\n                </td>\n                <td>\n                    <span class=\"status-badge ${alignmentInfo.class}\">${alignmentInfo.label}</span>\n                </td>\n            </tr>\n        `;\n    }).join('');\n    \n    return `\n        <div class=\"table-container\">\n            <table class=\"validation-table\">\n                <thead>\n                    <tr>\n                        <th>Feature</th>\n                        <th>Date</th>\n                        <th>Actual Value</th>\n                        <th>Prediction</th>\n                        <th>Alignment Status</th>\n                    </tr>\n                </thead>\n                <tbody>\n                    ${rows}\n                </tbody>\n            </table>\n        </div>\n    `;\n}\n\nreturn { html: htmlContent };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        48
+      ],
+      "id": "bd38d0c9-3d49-49f4-b6b4-c9ca4d0014f5",
+      "name": "populateHTML"
+    },
+    {
+      "parameters": {
+        "jsCode": "const dob = new Date($('Webhook').first().json.date_of_birth);\nconst today = new Date();\n\n// Calculate age\nlet age = today.getFullYear() - dob.getFullYear();\nconst m = today.getMonth() - dob.getMonth();\nif (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {\n  age--;\n}\n\n// Get inputs\nconst patient = $('Webhook').first().json;\nconst encounters = patient.encounters || [];\n\nconst explanationSummary = $('Call Predict Model').first().json.explanation_summary || {};\nconst directionEncoding = $('Call Predict Model').first().json.direction_encoding || {};\nconst riskScore = $('Call Predict Model').first().json.risk_score;\nconst stratification = $('Call Predict Model').first().json.stratification;\n\nconst featureToVitalMap = {\n  'lab_systolic_bp': 'systolic_bp_mmHg',\n  'lab_diastolic_bp': 'diastolic_bp_mmHg',\n  'lab_cholesterol': 'cholesterol_mg_dL',\n  'vital-sign-systolic': 'systolic_bp_mmHg',\n  'vital-sign-diastolic': 'diastolic_bp_mmHg',\n  'pulse': 'heart_rate_bpm',\n  'temperature': 'temperature_c',\n  'respiratory-rate': 'respiratory_rate_bpm',\n  'oxygen-saturation': 'spo2_percent',\n  'vital-sign-weight': 'weight_kg',\n  'vital-sign-height': 'height_cm'\n};\n\nconst output = [];\n\n// Loop over explanation dates\nfor (const [date, features] of Object.entries(explanationSummary)) {\n  // Try to find the matching encounter\n  const encounter = encounters.find(e => e.encounter_date === date);\n  const vitals = encounter?.vital_signs || {};\n  const diagnosis = encounter?.diagnoses || [];\n  const prescriptions = encounter?.prescriptions || [];\n  const notes = encounter?.doctor_notes || '';\n\n  for (const f of features) {\n    const featureName = f.feature;\n    const direction = directionEncoding[f.direction.toString()] || 'unknown';\n    const vitalKey = featureToVitalMap[featureName];\n    let value = 'Unknown';\n\n    // Try to resolve the value from vitals or known fields\n    if (vitalKey && vitals[vitalKey] !== undefined) {\n      value = vitals[vitalKey];\n    } else if (featureName.startsWith('diagnosis_code_')) {\n      const icd = featureName.split('_').slice(2).join('_');\n      value = diagnosis.includes(icd) ? icd : 'Not Present';\n    } else if (featureName.startsWith('code_')) {\n      const code = featureName.split('_').slice(1).join('_');\n      \n      if (code === 'diabetes') {\n        const diabetesCodes = diagnosis.filter(d => d.startsWith('E11') || d.startsWith('E10'));\n        value = diabetesCodes.length > 0 ? diabetesCodes.join(', ') : 'Not Diagnosed';\n      } else {\n        const foundMed = prescriptions.find(med => med.toLowerCase() === code.toLowerCase());\n        value = foundMed || 'Not Prescribed';\n      }\n    } else if (featureName === 'text_control') {\n      value = notes || 'No note available';\n    } else if (featureName === 'encounter_type') {\n      value = encounter?.encounter_type || 'Unknown';\n    }\n\n    output.push({\n      encounter_date: date,\n      feature: featureName,\n      value,\n      direction\n    });\n  }\n}\n\n// Final output\nreturn {\n  json: {\n    age,\n    features_for_alignment: output,\n    risk_score: riskScore,\n    stratification\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        48
+      ],
+      "id": "633676c3-0afa-474d-a00f-f00cfe8a1426",
+      "name": "processData"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        256
+      ],
+      "id": "0ad16153-9eaa-49f4-abef-add512a8e9cf",
+      "name": "Execute Workflow"
+    }
+  ],
+  "pinData": {
+    "Call Predict Model": [
+      {
+        "json": {
+          "patient_id": "12345",
+          "risk_score": 0.78,
+          "stratification": "high_risk",
+          "explanation_summary": {
+            "2024-01-15": [
+              {
+                "feature": "lab_systolic_bp",
+                "direction": 1
+              },
+              {
+                "feature": "diagnosis_code_I10",
+                "direction": 1
+              },
+              {
+                "feature": "lab_cholesterol",
+                "direction": 1
+              }
+            ],
+            "2024-03-10": [
+              {
+                "feature": "text_control",
+                "direction": -1
+              },
+              {
+                "feature": "code_diabetes",
+                "direction": 1
+              },
+              {
+                "feature": "code_metformin",
+                "direction": 1
+              }
+            ],
+            "2024-06-20": [
+              {
+                "feature": "lab_systolic_bp",
+                "direction": 1
+              },
+              {
+                "feature": "lab_diastolic_bp",
+                "direction": 1
+              },
+              {
+                "feature": "encounter_type",
+                "direction": -1
+              }
+            ]
+          },
+          "direction_encoding": {
+            "1": "increased risk",
+            "-1": "decreased risk"
+          }
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "patient_id": "12345",
+          "mrn": "MRN0098765",
+          "moh_id": 7043,
+          "regional_health_dept": "Riyadh Health Affairs",
+          "health_cluster": "Riyadh First Health Cluster",
+          "city": "Riyadh",
+          "gender": "Female",
+          "blood_group": "A+",
+          "date_of_birth": "1970-07-18",
+          "occupation": "Teacher",
+          "address_id": "ADDR01123",
+          "residency_status": "Saudi",
+          "nationality": "Saudi",
+          "religion": "Muslim",
+          "marital_status": "Widowed",
+          "encounters": [
+            {
+              "encounter_number": "ENC001000111",
+              "encounter_date": "2024-01-15",
+              "visit_datetime": "2024-01-15T09:30:00",
+              "facility_type": "PHC",
+              "facility_name": "Al-Malaz Clinic",
+              "facility_code": "RYD112",
+              "hospital_type": "Primary Health Care",
+              "visit_status": "Completed",
+              "primary_diagnosis_code": "I10",
+              "vital_signs": {
+                "systolic_bp_mmHg": 155,
+                "cholesterol_mg_dL": 240
+              },
+              "diagnoses": [
+                "I10"
+              ],
+              "lab_results": {
+                "cholesterol_total": 240
+              }
+            },
+            {
+              "encounter_number": "ENC001000112",
+              "encounter_date": "2024-03-10",
+              "visit_datetime": "2024-03-10T14:00:00",
+              "facility_type": "PHC",
+              "facility_name": "Al-Malaz Clinic",
+              "facility_code": "RYD112",
+              "hospital_type": "Primary Health Care",
+              "visit_status": "Completed",
+              "primary_diagnosis_code": "E11.9",
+              "diagnoses": [
+                "E11.9"
+              ],
+              "prescriptions": [
+                "Metformin"
+              ],
+              "doctor_notes": "Patient expressed improved lifestyle control and adherence."
+            },
+            {
+              "encounter_number": "ENC001000113",
+              "encounter_date": "2024-06-20",
+              "visit_datetime": "2024-06-20T08:10:00",
+              "facility_type": "PHC",
+              "facility_name": "Al-Malaz Clinic",
+              "facility_code": "RYD112",
+              "hospital_type": "Primary Health Care",
+              "visit_status": "Completed",
+              "primary_diagnosis_code": "I10",
+              "vital_signs": {
+                "systolic_bp_mmHg": 162,
+                "diastolic_bp_mmHg": 100
+              },
+              "encounter_type": "Follow-up",
+              "notes": "Blood pressure not well controlled, advised dietary changes."
+            }
+          ]
+        }
+      }
+    ],
+    "SDCP_criteria": [
+      {
+        "json": {
+          "row_number": 2,
+          "Field Name": "VITAL SIGNS & PHYSICAL MEASUREMENTS",
+          "Parameter": "",
+          "Normal Range/Value": "",
+          "Min. Risk Threshold": "",
+          "Max. Risk Threshold": "",
+          "High Risk Threshold": "",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Field Name": "SYSTOLIC_BLOOD_PRESSURE",
+          "Parameter": "Systolic BP (mmHg)",
+          "Normal Range/Value": "130",
+          "Min. Risk Threshold": 130,
+          "Max. Risk Threshold": 139,
+          "High Risk Threshold": ">= 140",
+          "SDCP Reference": "Section 9, Page 62-63"
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Field Name": "DIASTOLIC_BLOOD_PRESSURE",
+          "Parameter": "Diastolic BP (mmHg)",
+          "Normal Range/Value": "80",
+          "Min. Risk Threshold": 80,
+          "Max. Risk Threshold": 89,
+          "High Risk Threshold": ">= 90",
+          "SDCP Reference": "Section 9, Page 62-63"
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Field Name": "BMI",
+          "Parameter": "Body Mass Index (kg/m^2)",
+          "Normal Range/Value": "25",
+          "Min. Risk Threshold": 25,
+          "Max. Risk Threshold": 29.9,
+          "High Risk Threshold": ">= 30",
+          "SDCP Reference": "Section 6, Page 44; Section 4, Figure 2, Page 29"
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Field Name": "WEIGHT",
+          "Parameter": "Weight (kg)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Field Name": "HEIGHT",
+          "Parameter": "Height (cm)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Field Name": "HEART_RATE",
+          "Parameter": "Heart Rate (bpm)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "> 100 or < 60",
+          "SDCP Reference": "Section 10, Page 71 (Markers of severity)"
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Field Name": "TEMPERATURE",
+          "Parameter": "Body Temperature (C)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 10,
+          "Field Name": "RESPIRATORY_RATE",
+          "Parameter": "Respiratory Rate (/min)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 11,
+          "Field Name": "SPO2",
+          "Parameter": "Oxygen Saturation (%)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "< 92%",
+          "SDCP Reference": "Section 10, Page 71 (Markers of severity)"
+        }
+      },
+      {
+        "json": {
+          "row_number": 12,
+          "Field Name": "DEMOGRAPHICS & RISK FACTORS",
+          "Parameter": "",
+          "Normal Range/Value": "",
+          "Min. Risk Threshold": "",
+          "Max. Risk Threshold": "",
+          "High Risk Threshold": "",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 13,
+          "Field Name": "AGE",
+          "Parameter": "Age (years)",
+          "Normal Range/Value": "35",
+          "Min. Risk Threshold": 35,
+          "Max. Risk Threshold": 64,
+          "High Risk Threshold": ">= 65",
+          "SDCP Reference": "Section 2, Page 19"
+        }
+      },
+      {
+        "json": {
+          "row_number": 14,
+          "Field Name": "GENDER",
+          "Parameter": "Gender",
+          "Normal Range/Value": "Male or Female (baseline)",
+          "Min. Risk Threshold": "Female with GDM history or PCOS",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "",
+          "SDCP Reference": "Section 2, Page 20"
+        }
+      },
+      {
+        "json": {
+          "row_number": 15,
+          "Field Name": "SMOKING_FLAG",
+          "Parameter": "Smoking Status",
+          "Normal Range/Value": "Non-smoker",
+          "Min. Risk Threshold": "Former smoker",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "Current smoker",
+          "SDCP Reference": "Section 2, Page 20"
+        }
+      },
+      {
+        "json": {
+          "row_number": 16,
+          "Field Name": "PREGNANCY_FLAG",
+          "Parameter": "Pregnancy Status",
+          "Normal Range/Value": "Not pregnant",
+          "Min. Risk Threshold": "Pregnant",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "",
+          "SDCP Reference": "Section 2, Page 20"
+        }
+      },
+      {
+        "json": {
+          "row_number": 17,
+          "Field Name": "BLOOD_GROUP",
+          "Parameter": "Any blood group",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 18,
+          "Field Name": "MARTIAL_STATUS",
+          "Parameter": "Patient's martial status",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 19,
+          "Field Name": "NATIONALITY",
+          "Parameter": "Patient's nationality",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 20,
+          "Field Name": "CITY",
+          "Parameter": "Patient's city of residence",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 21,
+          "Field Name": "LABORATORY VALUES & DIAGNOSTIC TESTS",
+          "Parameter": "",
+          "Normal Range/Value": "",
+          "Min. Risk Threshold": "",
+          "Max. Risk Threshold": "",
+          "High Risk Threshold": "",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 22,
+          "Field Name": "TEST_RESULT (Glucose)",
+          "Parameter": "Fasting Blood Glucose (mg/dL)",
+          "Normal Range/Value": "100",
+          "Min. Risk Threshold": 100,
+          "Max. Risk Threshold": 126,
+          "High Risk Threshold": "> 126",
+          "SDCP Reference": "Section 2, Table 2, Page 20"
+        }
+      },
+      {
+        "json": {
+          "row_number": 23,
+          "Field Name": "TEST_RESULT (CGM - Hyperglycemia)",
+          "Parameter": "Continous Glucose Monitoring (mg/dL)",
+          "Normal Range/Value": "180",
+          "Min. Risk Threshold": 180,
+          "Max. Risk Threshold": 250,
+          "High Risk Threshold": "> 250",
+          "SDCP Reference": "Section 8, Page 58"
+        }
+      },
+      {
+        "json": {
+          "row_number": 24,
+          "Field Name": "TEST_RESULT (CGM - Hypoglycemia)",
+          "Parameter": "Continous Glucose Monitoring (mg/dL)",
+          "Normal Range/Value": "> 70",
+          "Min. Risk Threshold": 70,
+          "Max. Risk Threshold": 60,
+          "High Risk Threshold": "< 50",
+          "SDCP Reference": "Section 8, Page 58"
+        }
+      },
+      {
+        "json": {
+          "row_number": 25,
+          "Field Name": "TEST_RESULT (HbA1c)",
+          "Parameter": "HbA1c (%)",
+          "Normal Range/Value": "6.5%",
+          "Min. Risk Threshold": 0.07,
+          "Max. Risk Threshold": 0.08,
+          "High Risk Threshold": "> 8.5%",
+          "SDCP Reference": "Section 4, Figure 2, Page 29"
+        }
+      },
+      {
+        "json": {
+          "row_number": 26,
+          "Field Name": "TEST_RESULT (OGTT)",
+          "Parameter": "2hr OGTT (mg/dL)",
+          "Normal Range/Value": "140",
+          "Min. Risk Threshold": 140,
+          "Max. Risk Threshold": 199,
+          "High Risk Threshold": ">= 200 (Diabetes)",
+          "SDCP Reference": "Section 2, Table 2, Page 20"
+        }
+      },
+      {
+        "json": {
+          "row_number": 27,
+          "Field Name": "TEST_RESULT (Triglycerides)",
+          "Parameter": "Triglycerides (mg/dL)",
+          "Normal Range/Value": "150",
+          "Min. Risk Threshold": 150,
+          "Max. Risk Threshold": 199,
+          "High Risk Threshold": ">= 200, Critical >= 500",
+          "SDCP Reference": "Section 9, Table 10, Page 65"
+        }
+      },
+      {
+        "json": {
+          "row_number": 28,
+          "Field Name": "TEST_RESULT (ACR)",
+          "Parameter": "Albumin-Creatinine Ratio",
+          "Normal Range/Value": "30 ",
+          "Min. Risk Threshold": 30,
+          "Max. Risk Threshold": 299,
+          "High Risk Threshold": ">= 300 mg/g",
+          "SDCP Reference": "Section 10, Table 13, Page 83"
+        }
+      },
+      {
+        "json": {
+          "row_number": 29,
+          "Field Name": "TEST_RESULT (eGFR)",
+          "Parameter": "eGFR (mL/min/1.73m^2)",
+          "Normal Range/Value": ">= 90",
+          "Min. Risk Threshold": 89,
+          "Max. Risk Threshold": 60,
+          "High Risk Threshold": "<60, Critical <30",
+          "SDCP Reference": "Section 3, Table 4, Page 26"
+        }
+      },
+      {
+        "json": {
+          "row_number": 30,
+          "Field Name": "TEST_RESULT (LDL Cholesterol)",
+          "Parameter": "LDL Cholesterol (mg/dL)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": 70,
+          "Max. Risk Threshold": 99,
+          "High Risk Threshold": "> 100",
+          "SDCP Reference": "Section 9, Figure 12-13, Page 64"
+        }
+      },
+      {
+        "json": {
+          "row_number": 31,
+          "Field Name": "TEST_RESULT (HDL Cholesterol)",
+          "Parameter": "HDL Cholesterol (mg/dL)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "< 35",
+          "SDCP Reference": "Section 2, Page 20"
+        }
+      },
+      {
+        "json": {
+          "row_number": 32,
+          "Field Name": "TEST_RESULT (Ketones - Blood)",
+          "Parameter": "Blood Ketone Levels (mmol/L)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": ">6",
+          "SDCP Reference": "Section 10, Page 71 (Markers of severity)"
+        }
+      },
+      {
+        "json": {
+          "row_number": 33,
+          "Field Name": "TEST_RESULT (Ketones - Urine)",
+          "Parameter": "Urine Ketone Levels (mmol/L)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "≥2+",
+          "SDCP Reference": "Section 10, Page 71"
+        }
+      },
+      {
+        "json": {
+          "row_number": 34,
+          "Field Name": "TEST_RESULT (Bicarbonate)",
+          "Parameter": "HCO3 (mmol/L)",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "< 15",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "< 5",
+          "SDCP Reference": "Section 10, Page 71"
+        }
+      },
+      {
+        "json": {
+          "row_number": 35,
+          "Field Name": "TEST_RESULT (pH)",
+          "Parameter": "log[+H]",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "< 7.3",
+          "Max. Risk Threshold": "< 7.2",
+          "High Risk Threshold": "< 7.1",
+          "SDCP Reference": "Section 10, Page 71"
+        }
+      },
+      {
+        "json": {
+          "row_number": 36,
+          "Field Name": "CLINICAL CONDITIONS & COMPLICATIONS",
+          "Parameter": "",
+          "Normal Range/Value": "",
+          "Min. Risk Threshold": "",
+          "Max. Risk Threshold": "",
+          "High Risk Threshold": "",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 37,
+          "Field Name": "PRINICIPAL_DIAGNOSIS",
+          "Parameter": "Primary Diagnosis",
+          "Normal Range/Value": "No diabetes-related",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "Prediabetes/IGT",
+          "High Risk Threshold": "T1DM, T2DM, GDM",
+          "SDCP Reference": "Section 1, Figure 1, Page 17"
+        }
+      },
+      {
+        "json": {
+          "row_number": 38,
+          "Field Name": "SECONDARY_DIAGNOSIS",
+          "Parameter": "Secondary Diagnosis",
+          "Normal Range/Value": "No diabetes-related",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "Metabolic syndrome",
+          "High Risk Threshold": "Diabetes complications",
+          "SDCP Reference": "Section 3, Page 24-25"
+        }
+      },
+      {
+        "json": {
+          "row_number": 39,
+          "Field Name": "ALLERGY",
+          "Parameter": "Drug Allergies",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 40,
+          "Field Name": "TREATMENT & MONITORING CONTEXT",
+          "Parameter": "",
+          "Normal Range/Value": "",
+          "Min. Risk Threshold": "",
+          "Max. Risk Threshold": "",
+          "High Risk Threshold": "",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 41,
+          "Field Name": "MEDICINE_NAME",
+          "Parameter": "Medications",
+          "Normal Range/Value": "No diabetes medications",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "Oral hypoglycemics",
+          "High Risk Threshold": "Insulin therapy",
+          "SDCP Reference": "Section 7, Page 46-53"
+        }
+      },
+      {
+        "json": {
+          "row_number": 42,
+          "Field Name": "IS_URGENT_CASE",
+          "Parameter": "Urgency Status",
+          "Normal Range/Value": "Routine",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "Urgent",
+          "High Risk Threshold": "Emergency",
+          "SDCP Reference": "Section 10, Page 68-79"
+        }
+      },
+      {
+        "json": {
+          "row_number": 43,
+          "Field Name": "ENCOUNTER_TYPE",
+          "Parameter": "Visit Type",
+          "Normal Range/Value": "Routine follow-up",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "Problem-focused",
+          "High Risk Threshold": "Emergency",
+          "SDCP Reference": "Section 3, Page 24"
+        }
+      },
+      {
+        "json": {
+          "row_number": 44,
+          "Field Name": "SPECIALITY",
+          "Parameter": "Provider Specialty",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 45,
+          "Field Name": "REASON_FOR_VISIT",
+          "Parameter": "Purpose of healthcare encounter",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 46,
+          "Field Name": "ORDER_NAME",
+          "Parameter": "Medical orders/tests required",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 47,
+          "Field Name": "SPECIAL POPULATIONS & CONSIDERATIONS",
+          "Parameter": "",
+          "Normal Range/Value": "",
+          "Min. Risk Threshold": "",
+          "Max. Risk Threshold": "",
+          "High Risk Threshold": "",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 48,
+          "Field Name": "PATIENT_TYPE",
+          "Parameter": "Patient Category",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 49,
+          "Field Name": "DISABILITY",
+          "Parameter": "Disability Status",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 50,
+          "Field Name": "OCCUPATION",
+          "Parameter": "Occupation",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 51,
+          "Field Name": "HEALTHCARE SYSTEM FACTORS",
+          "Parameter": "",
+          "Normal Range/Value": "",
+          "Min. Risk Threshold": "",
+          "Max. Risk Threshold": "",
+          "High Risk Threshold": "",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 52,
+          "Field Name": "FACILITY_TYPE",
+          "Parameter": "Healthcare Facility",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 53,
+          "Field Name": "FACILITY_CODE",
+          "Parameter": "Healthcare Facility Identifier Code",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 54,
+          "Field Name": "HOSPITAL_TYPE",
+          "Parameter": "Hospital Category",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 55,
+          "Field Name": "WARD_TYPE",
+          "Parameter": "Ward/Unit Type",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 56,
+          "Field Name": "ADMISSION_TYPE",
+          "Parameter": "Type of hospital admission",
+          "Normal Range/Value": "N/A",
+          "Min. Risk Threshold": "N/A",
+          "Max. Risk Threshold": "N/A",
+          "High Risk Threshold": "N/A",
+          "SDCP Reference": ""
+        }
+      }
+    ]
+  },
+  "repo_name": "n8n-versioncontrol",
+  "repo_owner": "chamghannoum",
+  "repo_path": "github.com/chamghannoum/n8n-versioncontrol",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-25T12:07:53.866Z",
+      "updatedAt": "2025-08-25T12:07:53.866Z",
+      "role": "workflow:owner",
+      "workflowId": "4JD6uu0veAFIfLLp",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-26T05:09:58.000Z",
+  "versionId": "c6dd86fc-f992-4ec5-8e2c-1679b172a2f1"
+}
