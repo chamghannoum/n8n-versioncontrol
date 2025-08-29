@@ -1,0 +1,1139 @@
+{
+  "active": false,
+  "connections": {
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assign Types and All": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Assign Types and All",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Message ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message ": {
+      "main": [
+        [
+          {
+            "node": "Get Article Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Article Image": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "CHOOSE CRITERIA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Message Variant & ID": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get Message Variant & ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Article Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Hub": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CHOOSE CRITERIA": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Article Title": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Hub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-04T06:16:55.228Z",
+  "id": "H9xQuLOZHtG2VfVI",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Automated Guided Care Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1232,
+        256
+      ],
+      "id": "5feeaabb-50ca-44a1-9e63-479e118577f9",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        240
+      ],
+      "id": "92f6a00b-5b39-4604-8ed6-8bd7077822ef",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a9e6f20-25f1-4f46-9bb5-6789d9337e17",
+              "name": "name",
+              "value": "={{ $json['Knowledge Hub Article'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ee48e9a1-7ac2-4ee0-b469-105b61564f9f",
+              "name": "code",
+              "value": "={{ $json['Message ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0b26a6e7-0181-4064-8641-ee5c800f820c",
+              "name": "medicalMessageType",
+              "value": "={{ $json['Message Type'].toUpperCase()}}",
+              "type": "string"
+            },
+            {
+              "id": "6a8ae966-f9b3-45ea-b1eb-9d99e8a92ba3",
+              "name": "medicalMessageCategory",
+              "value": "={{ \n  $json['Message ID'].includes('MD') ? 'MEDICAL' : \n  $json['Message ID'].includes('GE') ? 'GENERAL' : \n  $json['Message ID'].includes('MR') ? 'MONITORING' : \n  ''\n}}",
+              "type": "string"
+            },
+            {
+              "id": "652c186c-9341-45a2-a052-892e9472d552",
+              "name": "healthConditionId",
+              "value": "={{\n  $json['Condition'] === 'Pre-Conception' ? 'SGVhbHRoQ29uZGl0aW9uOjI2' :\n  $json['Condition'] === 'Post-Natal' ? 'SGVhbHRoQ29uZGl0aW9uOjI4' :\n  $json['Condition'] === 'Antenatal' ? 'GVhbHRoQ29uZGl0aW9uOjI3' :\n  $json['Condition'] === 'Essential Hypertension' ? 'SGVhbHRoQ29uZGl0aW9uOjIy' :\n  $json['Condition'] === 'Pre-Hypertension' ? 'SGVhbHRoQ29uZGl0aW9uOjIx' :\n  $json['Condition'] === 'Pre-Diabetes' ? 'SGVhbHRoQ29uZGl0aW9uOjM=' :\n  $json['Condition'] === 'Type 2 Diabetes Mellitus' ? 'SGVhbHRoQ29uZGl0aW9uOjQ=' :\n  $json['Condition'] === 'Primary Care & Wellness - Male Young Adults' ? 'SGVhbHRoQ29uZGl0aW9uOjEz' :\n  $json['Condition'] === 'Primary Care & Wellness - Male Middle Aged Adults' ? 'SGVhbHRoQ29uZGl0aW9uOjEz' :\n  $json['Condition'] === 'Primary Care & Wellness - Male Older Adults' ? 'SGVhbHRoQ29uZGl0aW9uOjEz' :\n  $json['Condition'] === 'Primary Care & Wellness - Female Young Adults' ? 'SGVhbHRoQ29uZGl0aW9uOjEz' :\n  $json['Condition'] === 'Primary Care & Wellness - Female Middle Aged Adults' ? 'SGVhbHRoQ29uZGl0aW9uOjEz' :\n  $json['Condition'] === 'Primary Care & Wellness - Female Older Adults' ? 'SGVhbHRoQ29uZGl0aW9uOjEz' :\n  ''\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -704,
+        160
+      ],
+      "id": "eb70bc7b-fa23-4aa0-8eef-5e44923c8406",
+      "name": "Assign Types and All"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.iohealth.com/gateway/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "authorization",
+              "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJBZHhYNEJFbHZVU2o0WFpDYU9NZzRNWWxwV184SklncjdPbENNUDI2NmZ3In0.eyJleHAiOjE3NTU0NDc2NDUsImlhdCI6MTc1MzcxOTY0NSwianRpIjoiNWRkYmVjOTAtN2Q4Ny00Njk3LTlmNjEtMzc3MWFiZTc1YmMyIiwiaXNzIjoiaHR0cHM6Ly9hcGkuaW9oZWFsdGguY29tL2F1dGgvcmVhbG1zL3ByZC1zZWhoYXRpIiwic3ViIjoiYTFiMDdkMjgtZDkyYy00ZTRiLWJlNTItMTUxYjk5NjU1ZWMwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWRtaW4iLCJzZXNzaW9uX3N0YXRlIjoiNWY2NGQyMmMtOGJiMi00YWY0LWI0ODctOTVhMmEzNjVjYWZmIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtamhpcHN0ZXIiXX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjVmNjRkMjJjLThiYjItNGFmNC1iNDg3LTk1YTJhMzY1Y2FmZiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiYXBwX3R5cGUiOiJBZG1pbiIsInVzZXJfaWQiOjY1LCJuYW1lIjoiU3VwZXIgQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI2NSIsImdpdmVuX25hbWUiOiJTdXBlciIsImZhbWlseV9uYW1lIjoiQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AaW9oZWFsdGguY29tIiwiYXBwX3JvbGUiOiJBZG1pbiJ9.JBpw6j1rK3at0wx8y_OXnO1UNSA_n2GrnmxDGto_jmX1ykDKiDDh4DLdTzWYHqzTaPI9EzIb91e4FW972mNPdhwoog3RgdKwj6u5F3jV7EE6ZXzBpM9ZLbCjQzAoHTXYZCCue7vOYSNI3B1qL16sUbwM5RPBWCX7PpDDJM3CqFJwd44Ads4jLUZFLiy5FkAq1baGoKv3i0JYJ4aHeVgI40_WcoUz7SnSmpiabLGNRFhXvHNvDxb5yrAS0fYZjO39gWENyCSHWszRg7OyasL3HMoPnHAhRHHoaV06ozlGGhfgKFXnyjZSJkFCgwPUxdc6ISPB4DBodBGysTxvj9BjPA"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation MedicalMessageCreate($input: MedicalMessageInput!) {\\n  medicalMessageCreate(input: $input) {\\n    medicalMessageErrors {\\n      field\\n      message\\n      __typename\\n    }\\n    __typename\\n  }\\n}\",\n  \"variables\": {\n    \"input\": {\n      \"name\": \"{{ $('Message ').item.json.name }}\",\n      \"code\": \"{{ $('Message ').item.json.code }}\",\n     \"headerImage\": \"{{ $json.data.articles.edges[0].node.headerImage ? $json.data.articles.edges[0].node.headerImage : 'https://api.iohealth.com/file-service/api/download/place_holder_1751880073418.jpg' }}\",\n      \"medicalMessageType\": \"{{ $('Message ').item.json.medicalMessageType }}\",\n      \"medicalMessageCategory\": \"{{ $('Message ').item.json.medicalMessageCategory }}\",\n      \"healthConditionId\": \"{{ $('Message ').item.json.healthConditionId }}\"\n    }\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        656,
+        128
+      ],
+      "id": "fe4691d0-7d90-442e-9a49-2439700d30a2",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw",
+          "mode": "list",
+          "cachedResultName": "PCW- MYA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2084833570,
+          "mode": "list",
+          "cachedResultName": "Sheet9",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw/edit#gid=2084833570"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1008,
+        256
+      ],
+      "id": "9219e0d3-bc87-4a9f-ba3f-feabc8ff68b2",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gsiIfMqpSgtD3EPk",
+          "name": "Layla's Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -272,
+        144
+      ],
+      "id": "27c729be-10fb-4c97-ac01-bd4284e4dffb",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a9e6f20-25f1-4f46-9bb5-6789d9337e17",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "ee48e9a1-7ac2-4ee0-b469-105b61564f9f",
+              "name": "code",
+              "value": "={{ $json.code }}",
+              "type": "string"
+            },
+            {
+              "id": "0b26a6e7-0181-4064-8641-ee5c800f820c",
+              "name": "medicalMessageType",
+              "value": "={{ $json.medicalMessageType }}",
+              "type": "string"
+            },
+            {
+              "id": "6a8ae966-f9b3-45ea-b1eb-9d99e8a92ba3",
+              "name": "medicalMessageCategory",
+              "value": "={{ $json.medicalMessageCategory }}",
+              "type": "string"
+            },
+            {
+              "id": "652c186c-9341-45a2-a052-892e9472d552",
+              "name": "healthConditionId",
+              "value": "={{ $json.healthConditionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "6f495a62-fcc7-4589-b7b1-5c2e2f36d91b",
+      "name": "Message "
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.iohealth.com/gateway/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,ar;q=0.8"
+            },
+            {
+              "name": "authorization",
+              "value": "=Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJBZHhYNEJFbHZVU2o0WFpDYU9NZzRNWWxwV184SklncjdPbENNUDI2NmZ3In0.eyJleHAiOjE3NTU0NDc2NDUsImlhdCI6MTc1MzcxOTY0NSwianRpIjoiNWRkYmVjOTAtN2Q4Ny00Njk3LTlmNjEtMzc3MWFiZTc1YmMyIiwiaXNzIjoiaHR0cHM6Ly9hcGkuaW9oZWFsdGguY29tL2F1dGgvcmVhbG1zL3ByZC1zZWhoYXRpIiwic3ViIjoiYTFiMDdkMjgtZDkyYy00ZTRiLWJlNTItMTUxYjk5NjU1ZWMwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWRtaW4iLCJzZXNzaW9uX3N0YXRlIjoiNWY2NGQyMmMtOGJiMi00YWY0LWI0ODctOTVhMmEzNjVjYWZmIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtamhpcHN0ZXIiXX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjVmNjRkMjJjLThiYjItNGFmNC1iNDg3LTk1YTJhMzY1Y2FmZiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiYXBwX3R5cGUiOiJBZG1pbiIsInVzZXJfaWQiOjY1LCJuYW1lIjoiU3VwZXIgQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI2NSIsImdpdmVuX25hbWUiOiJTdXBlciIsImZhbWlseV9uYW1lIjoiQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AaW9oZWFsdGguY29tIiwiYXBwX3JvbGUiOiJBZG1pbiJ9.JBpw6j1rK3at0wx8y_OXnO1UNSA_n2GrnmxDGto_jmX1ykDKiDDh4DLdTzWYHqzTaPI9EzIb91e4FW972mNPdhwoog3RgdKwj6u5F3jV7EE6ZXzBpM9ZLbCjQzAoHTXYZCCue7vOYSNI3B1qL16sUbwM5RPBWCX7PpDDJM3CqFJwd44Ads4jLUZFLiy5FkAq1baGoKv3i0JYJ4aHeVgI40_WcoUz7SnSmpiabLGNRFhXvHNvDxb5yrAS0fYZjO39gWENyCSHWszRg7OyasL3HMoPnHAhRHHoaV06ozlGGhfgKFXnyjZSJkFCgwPUxdc6ISPB4DBodBGysTxvj9BjPA"
+            },
+            {
+              "name": "cache-control",
+              "value": "no-cache"
+            },
+            {
+              "name": "origin",
+              "value": "https://gcadmin.dev.iohealth.com"
+            },
+            {
+              "name": "pragma",
+              "value": "no-cache"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://gcadmin.dev.iohealth.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?1"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Android\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{\\n    articles(filter:{title:\\\"{{ $json.name }}\\\"}){\\n        edges{\\n            node{\\n                id\\n                title\\n           headerImage\\n               }\\n        }\\n    }\\n}\",\n  \"variables\": {}\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        96,
+        80
+      ],
+      "id": "ff1265d6-40ac-46e7-bce0-e737ff9d855a",
+      "name": "Get Article Image",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1520,
+        960
+      ],
+      "id": "84c9b759-3097-4653-a315-4e7c63110e12",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f7fdb63-888e-413d-a509-f15c305888e2",
+              "name": "code",
+              "value": "={{ $json['Message ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "82ac2538-a23f-4a49-a34a-e0823c62d240",
+              "name": "article title",
+              "value": "={{ $json['Knowledge Hub Article'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1120,
+        1024
+      ],
+      "id": "563dcac7-0def-40f1-921a-53643918cbdb",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.iohealth.com/gateway/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,ar;q=0.8"
+            },
+            {
+              "name": "authorization",
+              "value": "=Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJBZHhYNEJFbHZVU2o0WFpDYU9NZzRNWWxwV184SklncjdPbENNUDI2NmZ3In0.eyJleHAiOjE3NTU0NDc2NDUsImlhdCI6MTc1MzcxOTY0NSwianRpIjoiNWRkYmVjOTAtN2Q4Ny00Njk3LTlmNjEtMzc3MWFiZTc1YmMyIiwiaXNzIjoiaHR0cHM6Ly9hcGkuaW9oZWFsdGguY29tL2F1dGgvcmVhbG1zL3ByZC1zZWhoYXRpIiwic3ViIjoiYTFiMDdkMjgtZDkyYy00ZTRiLWJlNTItMTUxYjk5NjU1ZWMwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWRtaW4iLCJzZXNzaW9uX3N0YXRlIjoiNWY2NGQyMmMtOGJiMi00YWY0LWI0ODctOTVhMmEzNjVjYWZmIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtamhpcHN0ZXIiXX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjVmNjRkMjJjLThiYjItNGFmNC1iNDg3LTk1YTJhMzY1Y2FmZiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiYXBwX3R5cGUiOiJBZG1pbiIsInVzZXJfaWQiOjY1LCJuYW1lIjoiU3VwZXIgQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI2NSIsImdpdmVuX25hbWUiOiJTdXBlciIsImZhbWlseV9uYW1lIjoiQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AaW9oZWFsdGguY29tIiwiYXBwX3JvbGUiOiJBZG1pbiJ9.JBpw6j1rK3at0wx8y_OXnO1UNSA_n2GrnmxDGto_jmX1ykDKiDDh4DLdTzWYHqzTaPI9EzIb91e4FW972mNPdhwoog3RgdKwj6u5F3jV7EE6ZXzBpM9ZLbCjQzAoHTXYZCCue7vOYSNI3B1qL16sUbwM5RPBWCX7PpDDJM3CqFJwd44Ads4jLUZFLiy5FkAq1baGoKv3i0JYJ4aHeVgI40_WcoUz7SnSmpiabLGNRFhXvHNvDxb5yrAS0fYZjO39gWENyCSHWszRg7OyasL3HMoPnHAhRHHoaV06ozlGGhfgKFXnyjZSJkFCgwPUxdc6ISPB4DBodBGysTxvj9BjPA"
+            },
+            {
+              "name": "cache-control",
+              "value": "no-cache"
+            },
+            {
+              "name": "origin",
+              "value": "https://gcadmin.dev.iohealth.com"
+            },
+            {
+              "name": "pragma",
+              "value": "no-cache"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://gcadmin.dev.iohealth.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?1"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Android\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{\\n    medicalMessages(first:10000,filter:{code:\\\"{{ $json.code }}\\\"}){\\n        edges{\\n            node{\\n                id\\n                code\\n                name\\n                messages{\\n                    id\\n                    bodyArabic\\n                    bodyEnglish\\n                    presentedTitleArabic\\n                    presentedTitleEnglish\\n                   \\n                }\\n            }\\n        }\\n    }\\n}\",\n  \"variables\": {\n    \"medicalMessageId\": \"746\"\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -464,
+        864
+      ],
+      "id": "2a77bde2-4036-44b4-9018-2af0c97f36c2",
+      "name": "Get Message Variant & ID",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -688,
+        1024
+      ],
+      "id": "77bc655d-dbd2-4807-a4f0-b2a20d8f80c5",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3100940a-0cb9-4ed6-87a8-077dd934f6d2",
+              "leftValue": "={{ $json.data.medicalMessages.edges[0].node.messages[4] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        944
+      ],
+      "id": "e4be4dc0-3dfc-4ff5-91b7-597f7485c553",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1bae9f1f-f634-4e1c-ac1f-661601144ef3",
+              "name": "bodyArabic",
+              "value": "={{ $json['Message Content Arabic'] }}",
+              "type": "string"
+            },
+            {
+              "id": "cfeef2a3-5469-412b-b2f8-bab815927f6f",
+              "name": "bodyEnglish",
+              "value": "={{ $json['Message Content'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6fd9e658-96e2-4e69-ae02-671b394d0212",
+              "name": "presentedTitleArabic",
+              "value": "={{ $json['Message Title Arabic'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f31b8c78-596f-4663-8e5d-006728fa72de",
+              "name": "presentedTitleEnglish",
+              "value": "={{ $json['Message Title'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        944
+      ],
+      "id": "f196b9bb-556d-4045-8ca2-14bd02660718",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.iohealth.com/gateway/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,ar;q=0.8"
+            },
+            {
+              "name": "authorization",
+              "value": "=Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJBZHhYNEJFbHZVU2o0WFpDYU9NZzRNWWxwV184SklncjdPbENNUDI2NmZ3In0.eyJleHAiOjE3NTU0NDc2NDUsImlhdCI6MTc1MzcxOTY0NSwianRpIjoiNWRkYmVjOTAtN2Q4Ny00Njk3LTlmNjEtMzc3MWFiZTc1YmMyIiwiaXNzIjoiaHR0cHM6Ly9hcGkuaW9oZWFsdGguY29tL2F1dGgvcmVhbG1zL3ByZC1zZWhoYXRpIiwic3ViIjoiYTFiMDdkMjgtZDkyYy00ZTRiLWJlNTItMTUxYjk5NjU1ZWMwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWRtaW4iLCJzZXNzaW9uX3N0YXRlIjoiNWY2NGQyMmMtOGJiMi00YWY0LWI0ODctOTVhMmEzNjVjYWZmIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtamhpcHN0ZXIiXX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjVmNjRkMjJjLThiYjItNGFmNC1iNDg3LTk1YTJhMzY1Y2FmZiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiYXBwX3R5cGUiOiJBZG1pbiIsInVzZXJfaWQiOjY1LCJuYW1lIjoiU3VwZXIgQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI2NSIsImdpdmVuX25hbWUiOiJTdXBlciIsImZhbWlseV9uYW1lIjoiQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AaW9oZWFsdGguY29tIiwiYXBwX3JvbGUiOiJBZG1pbiJ9.JBpw6j1rK3at0wx8y_OXnO1UNSA_n2GrnmxDGto_jmX1ykDKiDDh4DLdTzWYHqzTaPI9EzIb91e4FW972mNPdhwoog3RgdKwj6u5F3jV7EE6ZXzBpM9ZLbCjQzAoHTXYZCCue7vOYSNI3B1qL16sUbwM5RPBWCX7PpDDJM3CqFJwd44Ads4jLUZFLiy5FkAq1baGoKv3i0JYJ4aHeVgI40_WcoUz7SnSmpiabLGNRFhXvHNvDxb5yrAS0fYZjO39gWENyCSHWszRg7OyasL3HMoPnHAhRHHoaV06ozlGGhfgKFXnyjZSJkFCgwPUxdc6ISPB4DBodBGysTxvj9BjPA"
+            },
+            {
+              "name": "cache-control",
+              "value": "no-cache"
+            },
+            {
+              "name": "origin",
+              "value": "https://gcadmin.dev.iohealth.com"
+            },
+            {
+              "name": "pragma",
+              "value": "no-cache"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://gcadmin.dev.iohealth.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?1"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Android\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation MedicalMessageVariantCreate($input: MedicalMessageVariantInput!) {\\n  medicalMessageVariantCreate(input: $input) {\\n    medicalMessageVariantErrors {\\n      field\\n      message\\n      __typename\\n    }\\n    __typename\\n  }\\n}\",\n  \"variables\": {\n    \"input\": {\n      \"bodyArabic\": \"{{ $json.bodyArabic }}\",\n      \"bodyEnglish\": \"{{ $json.bodyEnglish }}\",\n      \"buttonTextArabic\": \"إكتشفي المزيد!\",\n      \"buttonTextEnglish\": \"Learn More!\",\n      \"presentedTitleArabic\": \"{{ $json.presentedTitleArabic }}\",\n      \"presentedTitleEnglish\": \"{{ $json.presentedTitleEnglish }}\",\n      \"articleId\": \"{{ $('Get Article Title').item.json.data.articles.edges[0].node.id }}\",\n      \"medicalMessageID\": \"{{ $('Get Message Variant & ID').item.json.data.medicalMessages.edges[0].node.id }}\"\n    }\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        944
+      ],
+      "id": "8966eb35-4482-485d-9bd4-9ab85360b0b4",
+      "name": "HTTP Request2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        528,
+        1120
+      ],
+      "id": "af77f1f7-9cbc-44b9-a128-6ac111e5b1a2",
+      "name": "Wait",
+      "webhookId": "08964955-1f22-40e6-a112-91015e16da10"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw",
+          "mode": "list",
+          "cachedResultName": "PCW- MYA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2084833570,
+          "mode": "list",
+          "cachedResultName": "Sheet9",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw/edit#gid=2084833570"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Knowledge Hub Article",
+              "lookupValue": "={{ $json.data.articles.edges[0].node.title }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        192,
+        944
+      ],
+      "id": "44fbd9a9-6680-49ca-b861-a670b5d33019",
+      "name": "Knowledge Hub"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw",
+          "mode": "list",
+          "cachedResultName": "PCW- MYA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2084833570,
+          "mode": "list",
+          "cachedResultName": "Sheet9",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qO8fl4RnA3g8cmiaW-uTXtJ4LUA4KWPR-3tZBljmgyw/edit#gid=2084833570"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1344,
+        944
+      ],
+      "id": "26fe10f0-0ac4-4618-9a64-7a072e912e84",
+      "name": "CHOOSE CRITERIA"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.iohealth.com/gateway/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,ar;q=0.8"
+            },
+            {
+              "name": "authorization",
+              "value": "=Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJBZHhYNEJFbHZVU2o0WFpDYU9NZzRNWWxwV184SklncjdPbENNUDI2NmZ3In0.eyJleHAiOjE3NTU0NDc2NDUsImlhdCI6MTc1MzcxOTY0NSwianRpIjoiNWRkYmVjOTAtN2Q4Ny00Njk3LTlmNjEtMzc3MWFiZTc1YmMyIiwiaXNzIjoiaHR0cHM6Ly9hcGkuaW9oZWFsdGguY29tL2F1dGgvcmVhbG1zL3ByZC1zZWhoYXRpIiwic3ViIjoiYTFiMDdkMjgtZDkyYy00ZTRiLWJlNTItMTUxYjk5NjU1ZWMwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWRtaW4iLCJzZXNzaW9uX3N0YXRlIjoiNWY2NGQyMmMtOGJiMi00YWY0LWI0ODctOTVhMmEzNjVjYWZmIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtamhpcHN0ZXIiXX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjVmNjRkMjJjLThiYjItNGFmNC1iNDg3LTk1YTJhMzY1Y2FmZiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiYXBwX3R5cGUiOiJBZG1pbiIsInVzZXJfaWQiOjY1LCJuYW1lIjoiU3VwZXIgQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI2NSIsImdpdmVuX25hbWUiOiJTdXBlciIsImZhbWlseV9uYW1lIjoiQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AaW9oZWFsdGguY29tIiwiYXBwX3JvbGUiOiJBZG1pbiJ9.JBpw6j1rK3at0wx8y_OXnO1UNSA_n2GrnmxDGto_jmX1ykDKiDDh4DLdTzWYHqzTaPI9EzIb91e4FW972mNPdhwoog3RgdKwj6u5F3jV7EE6ZXzBpM9ZLbCjQzAoHTXYZCCue7vOYSNI3B1qL16sUbwM5RPBWCX7PpDDJM3CqFJwd44Ads4jLUZFLiy5FkAq1baGoKv3i0JYJ4aHeVgI40_WcoUz7SnSmpiabLGNRFhXvHNvDxb5yrAS0fYZjO39gWENyCSHWszRg7OyasL3HMoPnHAhRHHoaV06ozlGGhfgKFXnyjZSJkFCgwPUxdc6ISPB4DBodBGysTxvj9BjPA"
+            },
+            {
+              "name": "cache-control",
+              "value": "no-cache"
+            },
+            {
+              "name": "origin",
+              "value": "https://gcadmin.dev.iohealth.com"
+            },
+            {
+              "name": "pragma",
+              "value": "no-cache"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://gcadmin.dev.iohealth.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?1"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Android\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{\\n    articles(filter:{title:\\\"{{ $json.data.medicalMessages.edges[0].node.name }}\\\"}){\\n        edges{\\n            node{\\n                id\\n                title\\n                titleAr\\n    category {\\n                  id\\n                  code\\n                  display\\n                  displayAr\\n                  parent {\\n                    id\\n                    code\\n                    display\\n                    displayAr\\n }\\n  }\\n            headerImage\\n        content\\n                contentAr\\n                description\\n                descriptionAr\\n                tags\\n            }\\n        }\\n    }\\n}\",\n  \"variables\": {}\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        16,
+        960
+      ],
+      "id": "b68fae5f-4839-4548-a76a-6abe038bedbe",
+      "name": "Get Article Title"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -928,
+        1024
+      ],
+      "id": "41c68c04-06fb-468d-9e60-e4c0ba34b03a",
+      "name": "Remove Duplicates1"
+    },
+    {
+      "parameters": {
+        "content": "# Change Source Here!",
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        1104
+      ],
+      "id": "2398b8e3-1619-460e-94b1-13378f19a01d",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cac0cca1-e123-4369-9f52-7826c90543a5",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        944
+      ],
+      "id": "3534a675-89b5-4b25-9440-ab77503b65c9",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "content": "## Upload Medical Message Variants\nGet variant details from sheets and upload on gc admin\n",
+        "height": 560,
+        "width": 2580,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1536,
+        704
+      ],
+      "id": "8cdad284-2aa9-4e99-9270-efbe99109427",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## gcadmin.iohealth.com\n\nuser: superadmin@iohealth.com\npass: 5oIIKvB1tU760Z6vM9",
+        "width": 368
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1776,
+        144
+      ],
+      "id": "e2d1279c-b555-462e-b549-264d798cb93d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## https://chatgpt.com/g/g-67764365eadc819196a0bb30c3b21464-medical-care-companion",
+        "width": 864
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1968,
+        -16
+      ],
+      "id": "4c6360d1-4511-4769-8060-92d5bd8b4ddc",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-04T06:16:55.243Z",
+      "updatedAt": "2025-08-04T06:16:55.243Z",
+      "role": "workflow:owner",
+      "workflowId": "H9xQuLOZHtG2VfVI",
+      "projectId": "Ytvzz6rsKKFricpK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-04T06:33:09.000Z",
+  "versionId": "d70d4e91-bb27-4fa8-81c2-e3c15e1e6cb9"
+}
